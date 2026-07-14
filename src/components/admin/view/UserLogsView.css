@@ -1,0 +1,248 @@
+/* ── Root ── */
+.logs-view {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* ── Hero strip ── */
+.logs-view-hero {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 18px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.06));
+    border: 1px solid rgba(99, 102, 241, 0.18);
+}
+
+.logs-view-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 800;
+    color: #fff;
+}
+
+.logs-view-hero-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary, #0a1120);
+    margin: 0 0 3px;
+}
+
+.logs-view-hero-meta {
+    font-size: 12px;
+    color: var(--text-muted, #64748b);
+}
+
+/* ── Section title ── */
+.logs-view-section-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted, #94a3b8);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--border, #e2e8f0);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* ── Info rows ── */
+.logs-view-info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--border, rgba(0, 0, 0, 0.05));
+    gap: 12px;
+}
+
+.logs-view-info-label {
+    font-size: 12px;
+    color: var(--text-muted, #94a3b8);
+    font-weight: 600;
+    min-width: 120px;
+    flex-shrink: 0;
+}
+
+.logs-view-info-value {
+    font-size: 12px;
+    color: var(--text-primary, #1e293b);
+    font-weight: 500;
+    text-align: right;
+    word-break: break-word;
+}
+
+/* ── Log timeline ── */
+.logs-view-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 360px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.logs-view-item {
+    display: flex;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: var(--surface-2, rgba(0, 0, 0, 0.02));
+    border: 1px solid var(--border, rgba(0, 0, 0, 0.06));
+    align-items: flex-start;
+}
+
+.logs-view-item-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 4px;
+    background: #6366f1;
+}
+
+.logs-view-item-dot.Edit {
+    background: #6366f1;
+}
+
+.logs-view-item-dot.Create {
+    background: #22c55e;
+}
+
+.logs-view-item-dot.Delete {
+    background: #ef4444;
+}
+
+.logs-view-item-dot.View {
+    background: #f59e0b;
+}
+
+.logs-view-item-dot.Login {
+    background: #3b82f6;
+}
+
+.logs-view-item-body {
+    flex: 1;
+}
+
+.logs-view-item-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary, #1e293b);
+    margin-bottom: 2px;
+}
+
+.logs-view-item-desc {
+    font-size: 11px;
+    color: var(--text-muted, #64748b);
+}
+
+.logs-view-item-right {
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.logs-view-item-time {
+    font-size: 11px;
+    color: var(--text-muted, #94a3b8);
+}
+
+.logs-view-type-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    background: rgba(99, 102, 241, 0.1);
+    color: #6366f1;
+    margin-top: 3px;
+}
+
+.logs-view-type-badge.Create {
+    background: rgba(34, 197, 94, 0.1);
+    color: #16a34a;
+}
+
+.logs-view-type-badge.Delete {
+    background: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+}
+
+.logs-view-type-badge.View {
+    background: rgba(245, 158, 11, 0.1);
+    color: #d97706;
+}
+
+.logs-view-type-badge.Login {
+    background: rgba(59, 130, 246, 0.1);
+    color: #2563eb;
+}
+
+.logs-view-empty {
+    font-size: 13px;
+    color: var(--text-muted, #94a3b8);
+    text-align: center;
+    padding: 24px 0;
+}
+
+/* ── Dark mode ── */
+html:not(.light-mode) .logs-view-hero {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(139, 92, 246, 0.05));
+    border-color: rgba(99, 102, 241, 0.14);
+}
+
+html:not(.light-mode) .logs-view-hero-name {
+    color: #e2e8f0;
+}
+
+html:not(.light-mode) .logs-view-hero-meta {
+    color: #64748b;
+}
+
+html:not(.light-mode) .logs-view-section-title {
+    color: #475569;
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+html:not(.light-mode) .logs-view-info-row {
+    border-bottom-color: rgba(255, 255, 255, 0.06);
+}
+
+html:not(.light-mode) .logs-view-info-label {
+    color: #64748b;
+}
+
+html:not(.light-mode) .logs-view-info-value {
+    color: #c8d0e0;
+}
+
+html:not(.light-mode) .logs-view-item {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+html:not(.light-mode) .logs-view-item-title {
+    color: #c8d0e0;
+}
+
+html:not(.light-mode) .logs-view-item-desc {
+    color: #475569;
+}
+
+html:not(.light-mode) .logs-view-item-time {
+    color: #475569;
+}
+
+html:not(.light-mode) .logs-view-empty {
+    color: #475569;
+}

@@ -1,0 +1,305 @@
+
+.msp-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+/* ── Trigger box ── */
+
+.msp-trigger {
+    min-height: 42px;
+    padding: 6px 36px 6px 10px;
+
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: #f8f9fb;
+
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 5px;
+
+    cursor: pointer;
+    position: relative;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    user-select: none;
+}
+
+.msp-trigger--open,
+.msp-trigger:hover {
+    border-color: #ffb830;
+    box-shadow: 0 0 0 3px rgba(255, 184, 48, 0.14);
+    background: #fff;
+}
+
+html:not(.light-mode) .msp-trigger {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+html:not(.light-mode) .msp-trigger--open,
+html:not(.light-mode) .msp-trigger:hover {
+    border-color: #ffb830;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+/* Chevron icon */
+.msp-chevron {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    transition: transform 0.2s;
+    flex-shrink: 0;
+}
+
+.msp-chevron--up {
+    transform: translateY(-50%) rotate(180deg);
+}
+
+/* Placeholder */
+.msp-placeholder {
+    font-size: 14px;
+    color: #94a3b8;
+    line-height: 28px;
+    padding: 0 2px;
+}
+
+/* ── Chips ── */
+.msp-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    flex: 1;
+}
+
+.msp-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+
+    padding: 3px 8px 3px 10px;
+    border-radius: 6px;
+
+    background: linear-gradient(135deg, #ffb830, #d4600a);
+    color: #fff;
+
+    font-size: 12.5px;
+    font-weight: 600;
+
+    white-space: nowrap;
+    animation: chipIn 0.15s ease both;
+}
+
+@keyframes chipIn {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.msp-chip-remove {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.25);
+    border: none;
+    cursor: pointer;
+
+    color: #fff;
+    padding: 0;
+
+    transition: background 0.12s;
+}
+
+.msp-chip-remove:hover {
+    background: rgba(255, 255, 255, 0.45);
+}
+
+/* ── Dropdown ── */
+
+.msp-dropdown {
+    position: absolute;
+    z-index: 200;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.09);
+    border-radius: 12px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.14);
+    overflow: hidden;
+    animation: dropIn 0.16s ease both;
+}
+
+html:not(.light-mode) .msp-dropdown {
+    background: #0e1a30;
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes dropIn {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Search bar */
+
+.msp-search-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+html:not(.light-mode) .msp-search-wrap {
+    border-bottom-color: rgba(255, 255, 255, 0.07);
+}
+
+.msp-search-icon {
+    color: #94a3b8;
+    flex-shrink: 0;
+}
+
+.msp-search {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 13px;
+    color: #0a1120;
+}
+
+html:not(.light-mode) .msp-search {
+    color: #e4e7f0;
+}
+
+.msp-search::placeholder {
+    color: #94a3b8;
+}
+
+/* Options list */
+
+.msp-list {
+    list-style: none;
+    padding: 6px;
+    margin: 0;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.msp-list::-webkit-scrollbar {
+    width: 5px;
+}
+
+.msp-list::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 20px;
+}
+
+html:not(.light-mode) .msp-list::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.18);
+}
+
+.msp-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 8px 10px;
+    border-radius: 7px;
+
+    font-size: 13.5px;
+    color: #0a1120;
+    cursor: pointer;
+
+    transition: background 0.1s;
+}
+
+html:not(.light-mode) .msp-option {
+    color: #e4e7f0;
+}
+
+.msp-option:hover {
+    background: rgba(255, 184, 48, 0.1);
+}
+
+.msp-option--selected {
+    background: rgba(255, 184, 48, 0.12);
+    font-weight: 600;
+    color: #d4600a;
+}
+
+html:not(.light-mode) .msp-option--selected {
+    color: #ffb830;
+    background: rgba(255, 184, 48, 0.1);
+}
+
+.msp-option-check {
+    width: 16px;
+    font-size: 12px;
+    color: #d4600a;
+    flex-shrink: 0;
+}
+
+html:not(.light-mode) .msp-option-check {
+    color: #ffb830;
+}
+
+/* Empty state */
+
+.msp-empty {
+    padding: 14px 12px;
+    font-size: 13px;
+    color: #94a3b8;
+    text-align: center;
+}
+
+/* Footer */
+
+.msp-footer {
+    padding: 7px 12px;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    font-size: 12px;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+html:not(.light-mode) .msp-footer {
+    border-top-color: rgba(255, 255, 255, 0.07);
+}
+
+.msp-clear {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: #ef4444;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.msp-clear:hover {
+    text-decoration: underline;
+}

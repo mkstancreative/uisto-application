@@ -1,0 +1,233 @@
+/* ── Wrapper ── */
+.lv-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+/* ── Loader ── */
+.lv-loader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 0;
+    gap: 12px;
+    color: #94a3b8;
+    font-size: 13px;
+}
+
+/* ── Hero ── */
+.lv-hero {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 18px;
+    background: linear-gradient(135deg, #fff8ec, #fff);
+    border-radius: 14px;
+    border: 1px solid rgba(245, 158, 11, 0.15);
+}
+
+html:not(.light-mode) .lv-hero {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.07), rgba(255, 255, 255, 0.03));
+    border-color: rgba(245, 158, 11, 0.12);
+}
+
+.lv-avatar {
+    width: 90px;
+    height: 110px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    flex-shrink: 0;
+    border: 2px solid rgba(245, 158, 11, 0.2);
+}
+
+.lv-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.lv-avatar-fallback {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+}
+
+html:not(.light-mode) .lv-avatar {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.lv-hero-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+}
+
+.lv-name {
+    font-size: 18px;
+    font-weight: 800;
+    color: #0a1120;
+    margin: 0;
+}
+
+html:not(.light-mode) .lv-name {
+    color: #e4e7f0;
+}
+
+.lv-email {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12.5px;
+    color: #64748b;
+}
+
+.lv-status-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.lv-status-pill {
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 3px 12px;
+    border-radius: 20px;
+}
+
+.lv-status-pill.enabled {
+    background: rgba(34, 197, 94, 0.12);
+    color: #16a34a;
+}
+
+.lv-status-pill.disabled {
+    background: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+}
+
+.lv-gender-pill {
+    font-size: 11.5px;
+    font-weight: 600;
+    padding: 3px 12px;
+    border-radius: 20px;
+    background: rgba(99, 102, 241, 0.1);
+    color: #6366f1;
+}
+
+/* ── Info grid ── */
+.lv-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+@media (max-width: 640px) {
+    .lv-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.lv-card {
+    background: #f8f9fb;
+    border-radius: 12px;
+    padding: 14px 16px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+html:not(.light-mode) .lv-card {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.07);
+}
+
+.lv-card-head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #94a3b8;
+    margin-bottom: 12px;
+}
+
+.lv-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.lv-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 13px;
+}
+
+.lv-row-label {
+    color: #94a3b8;
+    font-weight: 500;
+    white-space: nowrap;
+    min-width: 100px;
+}
+
+.lv-row-value {
+    color: #1e293b;
+    font-weight: 600;
+    text-align: right;
+    word-break: break-word;
+}
+
+html:not(.light-mode) .lv-row-value {
+    color: #c8d0e0;
+}
+
+/* ── Subjects ── */
+.lv-subjects-section {
+    background: #f8f9fb;
+    border-radius: 12px;
+    padding: 14px 16px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+html:not(.light-mode) .lv-subjects-section {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.07);
+}
+
+.lv-subject-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.lv-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 13px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    background: linear-gradient(135deg, rgba(255, 184, 48, 0.15), rgba(212, 96, 10, 0.1));
+    color: #d4600a;
+    border: 1px solid rgba(212, 96, 10, 0.15);
+}
+
+.lv-no-subjects {
+    font-size: 13px;
+    color: #94a3b8;
+    margin: 0;
+}

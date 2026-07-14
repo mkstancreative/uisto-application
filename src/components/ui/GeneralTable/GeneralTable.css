@@ -1,0 +1,388 @@
+/* ─────────────────────────────────────────
+   TABLE WRAPPER
+───────────────────────────────────────── */
+
+.general-table-wrapper {
+  border-radius: 14px;
+
+  overflow: visible;
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  background: #ffffff;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+  width: 100%;
+  /* Keep rounded corners by clipping thead/tfoot only via child selectors below */
+}
+
+/* ─────────────────────────────────────────
+   TOOLBAR
+───────────────────────────────────────── */
+
+.datatable-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  background: #ffffff;
+}
+
+.datatable-search {
+  width: 260px;
+  height: 34px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+  font-size: 13px;
+  color: #374151;
+  outline: none;
+  transition: all 0.15s;
+}
+
+.datatable-search::placeholder {
+  color: #9ca3af;
+}
+
+.datatable-search:focus {
+  border-color: #ffb830;
+  box-shadow: 0 0 0 2px rgba(255, 184, 48, 0.15);
+}
+
+/* ─────────────────────────────────────────
+   TABLE
+───────────────────────────────────────── */
+
+.general-table {
+  width: 100%;
+  /* overflow-x: auto; */
+  border-radius: 14px;
+  /* overflow-y must stay visible so dropdown menus aren't clipped */
+  overflow-y: visible;
+}
+
+.general-table table {
+  width: 100%;
+  border-collapse: collapse;
+  /* min-width: 650px; */
+}
+
+/* ─────────────────────────────────────────
+   HEADER
+───────────────────────────────────────── */
+
+.general-table thead {
+  background: #f8f9fb;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+}
+
+.general-table th {
+  text-align: left;
+  padding: 13px 16px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  /* white-space: nowrap; */
+}
+
+/* ─────────────────────────────────────────
+   BODY
+───────────────────────────────────────── */
+
+.general-table td {
+  padding: 13px 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  font-size: 13.5px;
+  color: #374151;
+  /* white-space: nowrap; */
+}
+
+.general-table tbody tr {
+  transition: background 0.12s ease;
+}
+
+.general-table tbody tr:hover {
+  background: #f8faff;
+}
+
+/* ─────────────────────────────────────────
+   EMPTY / STATE
+───────────────────────────────────────── */
+
+.table-state {
+  padding: 50px 16px !important;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 14px;
+  border-top: none !important;
+}
+
+.table-empty-icon {
+  display: block;
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+/* ─────────────────────────────────────────
+   SKELETON LOADER
+───────────────────────────────────────── */
+
+.skeleton {
+  height: 14px;
+  width: 100%;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 37%, #f1f5f9 63%);
+  background-size: 400% 100%;
+  animation: skeleton-loading 1.4s ease infinite;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0 50%;
+  }
+}
+
+/* ─────────────────────────────────────────
+   FOOTER
+───────────────────────────────────────── */
+
+.table-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding: 12px 16px;
+  background: #f8f9fb;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* Record count */
+
+.table-count {
+  font-size: 12.5px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+/* ─────────────────────────────────────────
+   PAGINATION
+───────────────────────────────────────── */
+
+.table-pagination {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.page-btn {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+  color: #374151;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.page-btn:hover:not(:disabled) {
+  border-color: #ffb830;
+  color: #d4600a;
+  background: rgba(255, 184, 48, 0.06);
+}
+
+.page-btn.active {
+  background: linear-gradient(135deg, #ffb830, #d4600a);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: 0 2px 8px rgba(212, 96, 10, 0.25);
+}
+
+.page-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.page-gap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  font-size: 13px;
+  color: #94a3b8;
+  user-select: none;
+}
+
+
+/* ─────────────────────────────────────────
+   PAGE SIZE SELECT
+───────────────────────────────────────── */
+
+.page-size-select {
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+  color: #374151;
+  font-size: 12.5px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.page-size-select:focus {
+  border-color: #ffb830;
+}
+
+/* ─────────────────────────────────────────
+   ACTION BUTTON (optional)
+───────────────────────────────────────── */
+
+.table-action {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  background: rgba(255, 184, 48, 0.12);
+  color: #d4600a;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.table-action:hover {
+  background: rgba(255, 184, 48, 0.2);
+}
+
+/* ─────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .datatable-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .datatable-search {
+    width: 100%;
+  }
+
+  .table-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .table-pagination {
+    flex-wrap: wrap;
+  }
+}
+
+/* ─────────────────────────────────────────
+   DARK MODE
+───────────────────────────────────────── */
+
+html:not(.light-mode) .general-table-wrapper {
+  background: #0e1a30;
+  border-color: rgba(255, 255, 255, 0.07);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.35);
+}
+
+html:not(.light-mode) .datatable-toolbar {
+  background: #0e1a30;
+  border-bottom-color: rgba(255, 255, 255, 0.06);
+}
+
+html:not(.light-mode) .datatable-search {
+  background: #121f38;
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #c9d1e0;
+}
+
+html:not(.light-mode) .datatable-search::placeholder {
+  color: #4a5568;
+}
+
+html:not(.light-mode) .general-table thead {
+  background: #0b1628;
+  border-bottom-color: rgba(255, 255, 255, 0.06);
+}
+
+html:not(.light-mode) .general-table th {
+  color: #7a8aaa;
+}
+
+html:not(.light-mode) .general-table td {
+  color: #c9d1e0;
+  border-top-color: rgba(255, 255, 255, 0.05);
+}
+
+html:not(.light-mode) .general-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+html:not(.light-mode) .table-state {
+  color: #4a5568;
+}
+
+html:not(.light-mode) .skeleton {
+  background: linear-gradient(90deg, #1a2844 25%, #1f3054 37%, #1a2844 63%);
+  background-size: 400% 100%;
+}
+
+html:not(.light-mode) .table-footer {
+  background: #0b1628;
+  border-top-color: rgba(255, 255, 255, 0.06);
+}
+
+html:not(.light-mode) .table-count {
+  color: #5a6a8a;
+}
+
+html:not(.light-mode) .page-btn {
+  background: #131f38;
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #a0aec0;
+}
+
+html:not(.light-mode) .page-btn:hover:not(:disabled) {
+  border-color: #ffb830;
+  background: rgba(255, 184, 48, 0.08);
+  color: #ffb830;
+}
+
+html:not(.light-mode) .page-btn.active {
+  background: linear-gradient(135deg, #ffb830, #d4600a);
+  color: #fff;
+  border-color: transparent;
+}
+
+html:not(.light-mode) .page-gap {
+  color: #3a4a6a;
+}
+
+html:not(.light-mode) .page-size-select {
+  background: #131f38;
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #a0aec0;
+}
+
+html:not(.light-mode) .table-action {
+  background: rgba(255, 184, 48, 0.08);
+  color: #ffb830;
+}

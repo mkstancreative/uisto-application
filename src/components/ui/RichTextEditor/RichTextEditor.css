@@ -1,0 +1,252 @@
+.rte-wrapper {
+  background: var(--input-bg, rgba(128, 128, 128, 0.05));
+  border: 1px solid var(--border-color, rgba(128, 128, 128, 0.2));
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.rte-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  padding: 8px;
+  background: rgba(128, 128, 128, 0.08); /* Adapts to both light and dark seamlessly */
+  border-bottom: 1px solid var(--border-color, rgba(128, 128, 128, 0.2));
+}
+
+.rte-sep {
+  width: 1px;
+  height: 20px;
+  background: rgba(128, 128, 128, 0.2);
+  margin: 0 4px;
+}
+
+.rte-tool-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted, rgba(128, 128, 128, 0.8));
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.rte-tool-btn:hover:not(.rte-tool-btn--disabled) {
+  background: rgba(128, 128, 128, 0.15);
+  color: var(--text-primary, inherit);
+}
+
+.rte-tool-btn--active {
+  background: rgba(209, 99, 74, 0.15); /* Soft tint of your gold/amber accent */
+  color: var(--accent-gold, #d1634a);
+}
+
+.rte-tool-btn--active:hover:not(.rte-tool-btn--disabled) {
+  background: rgba(209, 99, 74, 0.25);
+}
+
+.rte-tool-btn--disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.rte-content {
+  padding: 12px 16px;
+  min-height: 150px;
+  max-height: 400px;
+  overflow-y: auto;
+  font-size: 14px;
+  line-height: 1.6;
+  outline: none;
+  color: var(--text-primary, inherit);
+}
+
+/* Prose typography */
+.rte-content p {
+  margin-top: 0;
+  margin-bottom: 0.75em;
+}
+
+.rte-content p:last-child {
+  margin-bottom: 0;
+}
+
+.rte-content h2,
+.rte-content h3 {
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text-primary, inherit);
+}
+
+.rte-content h2 {
+  font-size: 1.25em;
+}
+
+.rte-content h3 {
+  font-size: 1.1em;
+}
+
+.rte-content ul,
+.rte-content ol {
+  padding-left: 1.5em;
+  margin-top: 0;
+  margin-bottom: 0.75em;
+}
+
+.rte-content li {
+  margin-bottom: 0.25em;
+}
+
+.rte-content blockquote {
+  border-left: 3px solid var(--accent-gold, #d1634a);
+  padding-left: 1em;
+  margin: 0 0 0.75em 0;
+  color: var(--text-muted, rgba(128, 128, 128, 0.8));
+  font-style: italic;
+  background: rgba(128, 128, 128, 0.05);
+  padding: 10px 10px 10px 14px;
+  border-radius: 0 4px 4px 0;
+}
+
+.rte-content hr {
+  border: none;
+  border-top: 1px solid var(--border-color, rgba(128, 128, 128, 0.2));
+  margin: 1.5em 0;
+}
+
+.rte-content code {
+  background: rgba(128, 128, 128, 0.1);
+  color: var(--accent-gold, #d1634a);
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.9em;
+}
+
+/* Placeholder */
+.rte-content p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: var(--text-muted, rgba(128, 128, 128, 0.6));
+  pointer-events: none;
+  height: 0;
+}
+/* ── Append these to your existing RichTextEditor.css ── */
+
+/* Color picker button */
+.rte-color-btn {
+  position: relative;
+  overflow: visible;
+}
+
+.rte-color-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+  top: 100%;
+  left: 0;
+}
+
+/* Link / Image dialog strip */
+.rte-link-dialog {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: var(--rte-toolbar-bg, #f9f9f9);
+  border-bottom: 1px solid var(--rte-border, #e0e0e0);
+}
+
+.rte-link-input {
+  flex: 1;
+  padding: 3px 7px;
+  font-size: 13px;
+  border: 1px solid var(--rte-border, #e0e0e0);
+  border-radius: 4px;
+  outline: none;
+}
+
+.rte-link-input:focus {
+  border-color: var(--rte-accent, #4f46e5);
+}
+
+.rte-link-ok,
+.rte-link-cancel {
+  padding: 3px 10px;
+  font-size: 12px;
+  border-radius: 4px;
+  border: 1px solid var(--rte-border, #e0e0e0);
+  background: white;
+  cursor: pointer;
+}
+
+.rte-link-ok {
+  background: var(--rte-accent, #4f46e5);
+  color: white;
+  border-color: var(--rte-accent, #4f46e5);
+}
+
+.rte-link-ok:hover {
+  opacity: 0.88;
+}
+
+.rte-link-cancel:hover {
+  background: #f3f3f3;
+}
+
+/* Table styles inside editor */
+.rte-content table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 12px 0;
+}
+
+.rte-content th,
+.rte-content td {
+  border: 1px solid var(--rte-border, #e0e0e0);
+  padding: 6px 10px;
+  min-width: 60px;
+  vertical-align: top;
+}
+
+.rte-content th {
+  background: #f3f4f6;
+  font-weight: 600;
+}
+
+.rte-content .selectedCell {
+  background: #dbeafe;
+}
+
+/* Links in editor */
+.rte-content a {
+  color: var(--rte-accent, #4f46e5);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* Images in editor */
+.rte-content img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 8px 0;
+  border-radius: 4px;
+}
+
+/* Highlight */
+.rte-content mark {
+  border-radius: 2px;
+  padding: 0 2px;
+}

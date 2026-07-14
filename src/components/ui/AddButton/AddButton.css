@@ -1,0 +1,33 @@
+.add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--accent-gold-bg);
+  color: #fff;
+
+  border: none;
+  border-radius: 8px;
+
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Hover */
+.add-btn:hover {
+  background: #111a33;
+  transform: translateY(-1px);
+}
+
+/* Active click */
+.add-btn:active {
+  transform: translateY(0);
+}
+
+/* Icon */
+.add-btn svg {
+  stroke-width: 2.5;
+}

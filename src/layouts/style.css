@@ -1,0 +1,102 @@
+.page-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+
+}
+
+.page-header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.page-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+
+.page-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #ffb830, #d4600a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(212, 96, 10, 0.3);
+}
+
+.page-icon.orange {
+  background: linear-gradient(135deg, #fb923c, #dc2626);
+  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.25);
+}
+
+.page-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0a1120;
+  line-height: 1.2;
+}
+
+html:not(.light-mode) .page-title {
+  color: #e4e7f0;
+}
+
+.page-sub {
+  font-size: 13px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+
+.filter-selects-block {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  justify-content: space-between;
+}
+
+.filter-selects-block>*:not(:last-child) {
+  flex: 1;
+}
+
+.filter-selects-block>div:last-of-type {
+  align-self: flex-end;
+}
+
+/* ── Assign Email Button ── */
+.assign-email-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 184, 48, 0.3);
+  background: rgba(255, 184, 48, 0.07);
+  color: #d4600a;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.assign-email-btn:hover {
+  background: linear-gradient(135deg, #ffb830, #d4600a);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 3px 10px rgba(212, 96, 10, 0.25);
+}
