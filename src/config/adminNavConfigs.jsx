@@ -41,34 +41,34 @@ export const ADMIN_NAV = [
           { label: 'Job Positions', path: '/admin/manage-positions' },
           { label: 'Manage Jobs', path: '/admin/manage-jobs' },
           { label: 'Job Applicants', path: '/admin/manage-job-applicants' },
-          // { label: 'Shortlist Per Job', path: '/admin/shortlist-management' },
-          // {
-          //   label: 'Shortlisted Candidates',
-          //   path: '/admin/shortlisted-candidates',
-          // },
+          { label: 'Shortlist Per Job', path: '/admin/shortlist-management' },
+          {
+            label: 'Shortlisted Candidates',
+            path: '/admin/shortlisted-candidates',
+          },
         ],
       },
-      // {
-      //   label: 'Settings',
-      //   icon: <Settings size={18} />,
-      //   children: [
-      //     { label: 'My Profile', path: '/admin/my-profile' },
-      //     { label: 'Change Password', path: '/admin/change-password' },
-      //     { label: 'Activity Logs', path: '/admin/activity-logs' },
-      //     { label: 'System Settings', path: '/admin/system-settings' },
-      //   ],
-      // },
+      {
+        label: 'Settings',
+        icon: <Settings size={18} />,
+        children: [
+          { label: 'My Profile', path: '/admin/my-profile' },
+          { label: 'Change Password', path: '/admin/change-password' },
+          { label: 'Activity Logs', path: '/admin/activity-logs' },
+          { label: 'System Settings', path: '/admin/system-settings' },
+        ],
+      },
     ],
   },
 
-  // {
-  //   section: 'Notifications',
-  //   items: [
-  //     {
-  //       label: 'Notifications',
-  //       icon: <Bell size={18} />,
-  //       path: '/admin/notifications',
-  //     },
-  //   ],
-  // },
+  {
+    section: 'Notifications',
+    items: [
+      {
+        label: 'Notifications',
+        icon: <Bell size={18} />,
+        path: '/admin/notifications',
+      },
+    ],
+  },
 ];
