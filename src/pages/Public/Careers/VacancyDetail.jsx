@@ -49,7 +49,7 @@ function VacancyDetail() {
   const { data, isLoading, isError, error, refetch } = useVacancy(jobId);
   const job = data?.data;
 
-  if (isLoading || isError || !job) {
+  if (isLoading || !job) {
     return (
       <PublicLayout eyebrow="Vacancy" title={isLoading ? 'Loading vacancy…' : 'Vacancy'}>
         <section className="cr-page">
@@ -57,7 +57,7 @@ function VacancyDetail() {
             {isLoading ? (
               <DetailSkeleton />
             ) : (
-              <VacancyUnavailable error={error ?? { status: 404 }} onRetry={() => refetch()} />
+              <VacancyUnavailable error={isError ? error : { status: 404 }} onRetry={() => refetch()} />
             )}
           </div>
         </section>

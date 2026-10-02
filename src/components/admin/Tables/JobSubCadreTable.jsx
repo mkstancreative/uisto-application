@@ -1,73 +1,94 @@
-import React from 'react'
+import { Pencil, Trash2 } from 'lucide-react';
 import GeneralTable from '../../ui/GeneralTable/GeneralTable';
 import ActionDropdown from '../../ui/ActionDropdown/ActionDropdown';
 import StatusBadge from '../../ui/StatusBadge/StatusBadge';
-import { Pencil, Power, Trash2 } from 'lucide-react';
+import Toggler from '../../ui/Toggler/Toggler';
+import { formatOnlyDate } from '../../../utils/helpers';
+import '../common/adminCommon.css';
 
-function JobSubCadreTable({ data, loading, onEdit, onDelete, onToggleStatus, meta, onPageChange, onLimitChange }) {
-    const columns = [
-        {
-            header: "S/N",
-            render: (_, index) => {
-                const start = meta ? ((meta.page || 1) - 1) * (meta.limit || 10) : 0;
-                return <span>{start + index + 1}</span>;
-            },
-        },
-        {
-            header: "Cadre Name",
-            render: (row) => <span className="fw-500">{row.name}</span>,
-        },
-        {
-            header: "Parent Cadre",
-            render: (row) => row.cadre || "—",
-        },
-        {
-            header: "Description",
-            render: (row) => row.description || "—",
-        },
-        {
-            header: "Status",
+function JobSubCadreTable({
+  data = [],
+  loading,
+  canEdit = false,
+  togglingId,
+  onEdit,
+  onDelete,
+  onToggle,
+  meta,
+  onPageChange,
+  onLimitChange,
+}) {
+  const columns = [
+    {
+      header: 'S/N',
+      render: (_, index) => {
+        const start = meta ? ((meta.page || 1) - 1) * (meta.limit || 10) : 0;
+        return start + index + 1;
+      },
+    },
+    {
+      header: 'Subcadre',
+      render: (row) => <span className="cell-main">{row.name}</span>,
+    },
+    {
+      header: 'Cadre',
+      render: (row) => row.cadre || 'Non-Academic',
+    },
+    {
+      header: 'Active',
+      render: (row) =>
+        canEdit ? (
+          <Toggler
+            checked={Boolean(row.isActive)}
+            disabled={togglingId === row._id}
+            onChange={() => onToggle?.(row)}
+          />
+        ) : (
+          <StatusBadge status={row.isActive ? 'Active' : 'Inactive'} />
+        ),
+    },
+    {
+      header: 'Created',
+      render: (row) => (
+        <span className="cell-nowrap">{row.createdAt ? formatOnlyDate(row.createdAt) : '—'}</span>
+      ),
+    },
+    ...(canEdit
+      ? [
+          {
+            header: 'Actions',
             render: (row) => (
-             <StatusBadge status={row.isActive ? "Active" : "Inactive"} />
+              <ActionDropdown
+                actions={[
+                  {
+                    label: 'Rename',
+                    icon: <Pencil size={13} />,
+                    onClick: () => onEdit?.(row),
+                  },
+                  {
+                    label: 'Delete',
+                    icon: <Trash2 size={13} />,
+                    onClick: () => onDelete?.(row),
+                    danger: true,
+                  },
+                ]}
+              />
             ),
-        },
-        {
-            header: "Actions",
-            render: (row) => (
-                <ActionDropdown
-                    actions={[
-                        {
-                            label: "Edit Cadre",
-                            icon: <Pencil size={13} />,
-                            onClick: () => onEdit?.(row),
-                        },
-                        {
-                            label: row.isActive ? "Deactivate" : "Activate",
-                            icon: <Power size={13} />,
-                            onClick: () => onToggleStatus?.(row),
-                        },
-                        {
-                            label: "Delete",
-                            icon: <Trash2 size={13} />,
-                            onClick: () => onDelete?.(row),
-                            danger: true,
-                        },
-                    ]}
-                />
-            ),
-        },
-    ];
+          },
+        ]
+      : []),
+  ];
 
-    return (
-        <GeneralTable 
-            columns={columns} 
-            data={data} 
-            loading={loading} 
-            meta={meta}
-            onPageChange={onPageChange}
-            onLimitChange={onLimitChange}
-        />
-    );
+  return (
+    <GeneralTable
+      columns={columns}
+      data={data}
+      loading={loading}
+      meta={meta}
+      onPageChange={onPageChange}
+      onLimitChange={onLimitChange}
+    />
+  );
 }
 
-export default JobSubCadreTable
+export default JobSubCadreTable;

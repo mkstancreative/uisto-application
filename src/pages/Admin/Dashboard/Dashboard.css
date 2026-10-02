@@ -209,7 +209,7 @@ html:not(.light-mode) .adb-hero-time {
 }
 
 .adb-kpi-card {
-  background: var(--card-bg, #ffffff);
+  background: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.06);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
   border-radius: 18px;
@@ -343,7 +343,7 @@ html:not(.light-mode) .adb-section-title {
   padding: 18px 12px;
   border-radius: 16px;
   border: 1px solid rgba(0, 0, 0, 0.05);
-  background: var(--card-bg, #ffffff);
+  background: #ffffff;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
   cursor: pointer;
   transition:
@@ -414,7 +414,7 @@ html:not(.light-mode) .adb-quick-label {
 }
 
 .adb-card {
-  background: var(--card-bg, #ffffff);
+  background: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.06);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
   border-radius: 18px;
@@ -659,5 +659,289 @@ html:not(.light-mode) .adb-skeleton {
 
   .adb-quick-grid {
     grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ════════════════════════════════════════
+   RECRUITMENT DASHBOARD ADDITIONS
+════════════════════════════════════════ */
+.adb-hero-day {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary, #071c20);
+  text-align: right;
+}
+
+html:not(.light-mode) .adb-hero-day {
+  color: #fff;
+}
+
+.adb-card-meta {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+html:not(.light-mode) .adb-card-meta {
+  color: #94a3b8;
+}
+
+.adb-card-pad {
+  padding: 16px 20px 18px;
+}
+
+.adb-hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 14px 0 0;
+  font-size: 12px;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+html:not(.light-mode) .adb-hint {
+  color: #94a3b8;
+}
+
+.adb-hint svg {
+  flex-shrink: 0;
+  color: #d97706;
+}
+
+html:not(.light-mode) .adb-hint svg {
+  color: #fcd34d;
+}
+
+.adb-error {
+  color: #b91c1c;
+}
+
+html:not(.light-mode) .adb-error {
+  color: #fca5a5;
+}
+
+/* ── Vacancy chart ── */
+.adb-chart {
+  width: 100%;
+  min-width: 0;
+}
+
+.adb-chart-tick {
+  font-size: 12px;
+  fill: #475569;
+}
+
+html:not(.light-mode) .adb-chart-tick {
+  fill: #cbd5e1;
+}
+
+.adb-chart-value {
+  font-size: 12px;
+  font-weight: 700;
+  fill: #071c20;
+}
+
+html:not(.light-mode) .adb-chart-value {
+  fill: #e3eceb;
+}
+
+.adb-chart-tooltip {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  background: #ffffff;
+  color: #071c20;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  max-width: 240px;
+}
+
+html:not(.light-mode) .adb-chart-tooltip {
+  background: #0b2a30;
+  color: #e3eceb;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.adb-chart-tooltip span {
+  color: #64748b;
+}
+
+html:not(.light-mode) .adb-chart-tooltip span {
+  color: #94a3b8;
+}
+
+.adb-chart-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 6px 0;
+}
+
+/* ── Reference submissions (sequential steps of the accent) ── */
+.adb-ref-bar {
+  display: flex;
+  gap: 2px;
+  height: 14px;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.adb-ref-seg {
+  flex-basis: 0;
+  min-width: 4px;
+}
+
+.adb-step-0 {
+  background: rgba(var(--accent-rgb), 0.22);
+}
+
+.adb-step-1 {
+  background: rgba(var(--accent-rgb), 0.45);
+}
+
+.adb-step-2 {
+  background: rgba(var(--accent-rgb), 0.7);
+}
+
+.adb-step-3 {
+  background: rgb(var(--accent-rgb));
+}
+
+.adb-ref-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.adb-ref-stat {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 0;
+}
+
+.adb-ref-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+
+.adb-ref-value {
+  display: block;
+  font-size: 18px;
+  font-weight: 800;
+  color: #071c20;
+  line-height: 1.2;
+}
+
+html:not(.light-mode) .adb-ref-value {
+  color: #fff;
+}
+
+.adb-ref-label {
+  display: block;
+  font-size: 11.5px;
+  color: #64748b;
+}
+
+html:not(.light-mode) .adb-ref-label {
+  color: #94a3b8;
+}
+
+/* ── Recent applications as buttons ── */
+.adb-row-btn {
+  width: 100%;
+  background: none;
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+
+html:not(.light-mode) .adb-row-btn {
+  border-bottom-color: rgba(255, 255, 255, 0.04);
+}
+
+.adb-row-btn:last-child {
+  border-bottom: none;
+}
+
+.adb-row-btn:focus-visible,
+.adb-quick-btn:focus-visible {
+  outline: 2px solid var(--accent-ink);
+  outline-offset: -2px;
+}
+
+.adb-row-btn .status-badge {
+  flex-shrink: 0;
+}
+
+.adb-quick-label {
+  line-height: 1.3;
+}
+
+@media (max-width: 640px) {
+  .adb-ref-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .adb-hero-date {
+    align-items: flex-start;
+  }
+
+  .adb-hero-day {
+    text-align: left;
+  }
+
+  .adb-card-pad {
+    padding: 14px 14px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .adb-kpi-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 16px;
+  }
+
+  .adb-kpi-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+  }
+
+  .adb-kpi-value {
+    font-size: 22px;
+  }
+
+  .adb-quick-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .adb-student-meta {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.adb-bottom-grid > * {
+  min-width: 0;
+}
+
+@media (max-width: 1100px) {
+  .adb-bottom-grid {
+    grid-template-columns: 1fr;
   }
 }

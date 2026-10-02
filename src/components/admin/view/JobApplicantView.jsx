@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { jsPDF } from "jspdf";
 import {
     User, Mail, Phone, Briefcase, Award, FileText, Calendar, Users, ExternalLink,
     AlertCircle, GraduationCap, Layers, ShieldCheck, Download, CheckCircle2, Clock,
     ClipboardEdit, ChevronDown, ChevronUp, StickyNote, MailCheck, BellRing, AlertTriangle,
 } from "lucide-react";
+import { toast } from "react-toastify";
 import CustomModal from "../../ui/CustomModal/CustomModal";
 import StatusBadge from "../../ui/StatusBadge/StatusBadge";
 import JobApplicantStatusMutate from "../Mutate/JobApplicantStatusMutate";
@@ -24,7 +24,8 @@ const REFEREE_COUNT = 3;
 const capitalize = (str) => (str ? String(str).charAt(0).toUpperCase() + String(str).slice(1) : str);
 
 /* ── Reference statement → PDF (wraps across pages) ── */
-const downloadRefAsPdf = (ref, ap) => {
+const downloadRefAsPdf = async (ref, ap) => {
+    const { jsPDF } = await import("jspdf");
     const doc = new jsPDF({ unit: "pt", format: "a4" });
     const margin = 50;
     const pageWidth = doc.internal.pageSize.getWidth();
@@ -147,7 +148,11 @@ function RefereeCard({ referee, ap }) {
                     <button
                         type="button"
                         className="av-ref-download-btn"
-                        onClick={() => downloadRefAsPdf(referee, ap)}
+                        onClick={() =>
+                            downloadRefAsPdf(referee, ap).catch(() =>
+                                toast.error("Could not create the PDF. Please try again.")
+                            )
+                        }
                     >
                         <Download size={13} /> Download as PDF
                     </button>
