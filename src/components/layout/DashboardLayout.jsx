@@ -6,13 +6,11 @@ import Sidebar from './Sidebar';
 import Topbar from './Topbar';
 
 
-const LOGOSUB = import.meta.env.VITE_LOGOSUB || 'LMS Portal';
-
 function DashboardLayout({
   navItems = [],
   logoIcon = '/logo.png',
-  logoTitle = 'LMS Portal',
-  logoSub = LOGOSUB,
+  logoTitle = 'UISTO Careers',
+  logoSub = 'Recruitment Portal',
   userName = 'User',
   userRole = 'Staff',
   userEmail = '',

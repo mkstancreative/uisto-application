@@ -1,56 +1,62 @@
 :root {
   --sb-width: 260px;
   --sb-collapsed: 72px;
-  --sb-bg: #080f1e;
-  --sb-border: rgba(255, 184, 48, 0.08);
-  --sb-item-hover: rgba(255, 184, 48, 0.07);
-  --sb-item-active: rgba(255, 184, 48, 0.13);
-  --sb-text: #a8b3cf;
+  --sb-bg: #082327;
+  --sb-border: rgba(var(--accent-rgb), 0.08);
+  --sb-item-hover: rgba(var(--accent-rgb), 0.07);
+  --sb-item-active: rgba(var(--accent-rgb), 0.13);
+  --sb-text: #9db5b8;
   --sb-text-active: #fff;
-  --sb-tooltip-bg: #1a2540;
+  --sb-tooltip-bg: #0f3a41;
   --sb-tooltip-text: #fff;
   --tb-height: 64px;
-  --tb-bg: rgba(8, 15, 30, 0.85);
-  --main-bg: #0a1120;
-  --main-bg-light: #f0f4ff;
+  --tb-bg: rgba(7, 28, 32, 0.85);
+  --main-bg: #071c20;
+  --main-bg-light: #eef4f3;
   --surface: rgba(255, 255, 255, 0.04);
   --surface-border: rgba(255, 255, 255, 0.07);
   --dm: 1;
 }
 
 html.light-mode {
-  --sb-bg: #ffffff;
-  --sb-border: rgba(0, 0, 0, 0.08);
-  --sb-item-hover: rgba(0, 0, 0, 0.04);
-  --sb-item-active: rgba(255, 184, 48, 0.12);
-  --sb-text: #4a5568;
-  --sb-text-active: #0a1120;
-  --sb-tooltip-bg: #ffffff;
-  --sb-tooltip-text: #0a1120;
+  /* Sidebar stays deep teal in light mode, matching the brand panels */
+  --sb-bg: linear-gradient(180deg, #0d4a53 0%, #0b3a41 100%);
+  --sb-border: rgba(255, 255, 255, 0.08);
+  --sb-text: #b7cfd1;
+  --sb-text-active: #ffffff;
+  --sb-tooltip-bg: #0b2a30;
+  --sb-tooltip-text: #ffffff;
   --tb-bg: #ffffff;
-  --main-bg: #f7f8fc;
+  --main-bg: #f3f6f5;
   --surface: rgba(255, 255, 255, 0.85);
   --surface-border: rgba(0, 0, 0, 0.08);
   --text-muted: #4a5568;
-  --text-primary: #0a1120;
-  --lm-gradient-accent: linear-gradient(135deg, #ffb830 0%, #d4600a 100%);
+  --text-primary: #071c20;
+}
+
+/* The sidebar is always a dark surface, so its accents are always lime */
+.sidebar {
+  --accent-ink: var(--brand-lime);
+  --accent-rgb: var(--brand-lime-rgb);
+  --sb-item-hover: rgba(255, 255, 255, 0.06);
+  --sb-item-active: rgba(var(--brand-lime-rgb), 0.12);
 }
 
 html.light-mode body {
-  background-color: #f7f8fc;
+  background-color: #f3f6f5;
   background-image: radial-gradient(
       ellipse 60% 55% at 5% 5%,
-      rgba(255, 184, 48, 0.13) 0%,
+      rgba(var(--accent-rgb), 0.13) 0%,
       transparent 65%
     ),
     radial-gradient(
       ellipse 55% 50% at 98% 95%,
-      rgba(255, 140, 20, 0.09) 0%,
+      rgba(var(--accent-rgb), 0.09) 0%,
       transparent 60%
     ),
     radial-gradient(
       ellipse 40% 40% at 95% 5%,
-      rgba(108, 99, 255, 0.06) 0%,
+      rgba(var(--accent-rgb), 0.06) 0%,
       transparent 55%
     ),
     radial-gradient(
@@ -59,11 +65,11 @@ html.light-mode body {
       transparent 80%
     );
   background-attachment: fixed;
-  color: #0a1120;
+  color: #071c20;
 }
 
 html.light-mode .dashboard-main {
-  color: #0a1120;
+  color: #071c20;
 }
 
 .dashboard-shell {
@@ -128,7 +134,7 @@ html.light-mode .dashboard-shell {
   justify-content: center;
   flex-shrink: 0;
   font-size: 18px;
-  box-shadow: 0 0 18px rgba(255, 184, 48, 0.35);
+  box-shadow: 0 0 18px rgba(var(--accent-rgb), 0.35);
 }
 
 .sb-logo-text {
@@ -147,7 +153,7 @@ html.light-mode .dashboard-shell {
 
 .sb-logo-text span {
   font-size: 10px;
-  color: var(--accent-gold);
+  color: var(--accent-ink);
   font-weight: 600;
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -233,7 +239,7 @@ html.light-mode .dashboard-shell {
   top: 20%;
   height: 60%;
   width: 3px;
-  background: var(--accent-gold);
+  background: var(--accent);
   border-radius: 0 4px 4px 0;
 }
 
@@ -247,7 +253,7 @@ html.light-mode .dashboard-shell {
 }
 
 .sb-item.active .sb-icon {
-  color: var(--accent-gold);
+  color: var(--accent-ink);
 }
 
 .sb-label {
@@ -306,7 +312,7 @@ html.light-mode .dashboard-shell {
 }
 
 .sb-sub-item.active {
-  color: var(--accent-gold);
+  color: var(--accent-ink);
 }
 
 .sb-sub-dot {
@@ -429,13 +435,13 @@ html.light-mode .topbar {
 .tb-page-title {
   font-size: 15px;
   font-weight: 700;
-  color: #e4e7f0;
+  color: #e3eceb;
   line-height: 1.2;
   transition: color 0.3s;
 }
 
 html.light-mode .tb-page-title {
-  color: #0a1120;
+  color: #071c20;
 }
 
 .tb-breadcrumb {
@@ -475,7 +481,7 @@ html.light-mode .tb-breadcrumb {
 .tb-icon-btn:hover {
   background: var(--sb-item-hover);
   color: #fff;
-  border-color: rgba(255, 184, 48, 0.25);
+  border-color: rgba(var(--accent-rgb), 0.25);
 }
 
 html.light-mode .tb-icon-btn {
@@ -485,7 +491,7 @@ html.light-mode .tb-icon-btn {
 }
 
 html.light-mode .tb-icon-btn:hover {
-  color: #0a1120;
+  color: #071c20;
   background: rgba(0, 0, 0, 0.05);
   border-color: rgba(0, 0, 0, 0.15);
 }
@@ -498,8 +504,8 @@ html.light-mode .tb-icon-btn:hover {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--accent-gold);
-  border: 2px solid var(--sb-bg);
+  background: var(--accent);
+  border: 2px solid var(--main-bg);
 }
 
 /* Dark mode toggle */
@@ -516,8 +522,8 @@ html.light-mode .tb-icon-btn:hover {
 }
 
 .tb-dm-toggle.on {
-  background: rgba(255, 184, 48, 0.18);
-  border-color: rgba(255, 184, 48, 0.3);
+  background: rgba(var(--accent-rgb), 0.18);
+  border-color: rgba(var(--accent-rgb), 0.3);
 }
 
 .tb-dm-knob {
@@ -541,7 +547,7 @@ html.light-mode .tb-dm-knob {
 
 .tb-dm-toggle.on .tb-dm-knob {
   transform: translateX(24px);
-  background: var(--accent-gold);
+  background: var(--accent);
 }
 
 /* Avatar + profile dropdown */
@@ -562,7 +568,7 @@ html.light-mode .tb-dm-knob {
 }
 
 .tb-avatar-btn:hover {
-  border-color: rgba(255, 184, 48, 0.3);
+  border-color: rgba(var(--accent-rgb), 0.3);
   background: var(--sb-item-hover);
 }
 
@@ -570,13 +576,13 @@ html.light-mode .tb-dm-knob {
   width: 30px;
   height: 30px;
   border-radius: 8px;
-  background: linear-gradient(135deg, #ffb830, #ff6b00);
+  background: var(--accent-gradient);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 12px;
   font-weight: 800;
-  color: #0a1120;
+  color: #071c20;
   flex-shrink: 0;
 }
 
@@ -589,19 +595,19 @@ html.light-mode .tb-dm-knob {
 .tb-avatar-name {
   font-size: 12px;
   font-weight: 700;
-  color: #e4e7f0;
+  color: #e3eceb;
   line-height: 1.2;
   white-space: nowrap;
   transition: color 0.3s;
 }
 
 html.light-mode .tb-avatar-name {
-  color: #0a1120;
+  color: #071c20;
 }
 
 .tb-avatar-role {
   font-size: 10px;
-  color: var(--accent-gold);
+  color: var(--accent-ink);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -613,7 +619,7 @@ html.light-mode .tb-avatar-name {
   top: calc(100% + 10px);
   right: 0;
   min-width: 210px;
-  background: #0e1a30;
+  background: #0b2a30;
   border: 1px solid var(--surface-border);
   border-radius: 14px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
@@ -641,11 +647,11 @@ html.light-mode .tb-profile-dropdown {
 .tb-pd-header h4 {
   font-size: 13px;
   font-weight: 700;
-  color: #e4e7f0;
+  color: #e3eceb;
 }
 
 html.light-mode .tb-pd-header h4 {
-  color: #0a1120;
+  color: #071c20;
 }
 
 html.light-mode .tb-pd-header p {
@@ -674,7 +680,7 @@ html.light-mode .tb-pd-item {
 }
 
 html.light-mode .tb-pd-item:hover {
-  color: #0a1120;
+  color: #071c20;
   background: rgba(0, 0, 0, 0.04);
 }
 
@@ -699,7 +705,7 @@ html.light-mode .tb-pd-item:hover {
   top: calc(100% + 10px);
   right: 0;
   width: 320px;
-  background: #0e1a30;
+  background: #0b2a30;
   border: 1px solid var(--surface-border);
   border-radius: 14px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
@@ -723,17 +729,17 @@ html.light-mode .tb-notif-dropdown {
 .tb-notif-header h4 {
   font-size: 13px;
   font-weight: 700;
-  color: #e4e7f0;
+  color: #e3eceb;
 }
 
 html.light-mode .tb-notif-header h4 {
-  color: #0a1120;
+  color: #071c20;
 }
 
 .tb-notif-mark {
   font-size: 11px;
   font-weight: 600;
-  color: var(--accent-gold);
+  color: var(--accent-ink);
   cursor: pointer;
 }
 
@@ -758,7 +764,7 @@ html.light-mode .tb-notif-header h4 {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--accent-gold);
+  background: var(--accent);
   flex-shrink: 0;
   margin-top: 5px;
 }
@@ -774,13 +780,13 @@ html.light-mode .tb-notif-header h4 {
 
 .tb-notif-text p {
   font-size: 12.5px;
-  color: #e4e7f0;
+  color: #e3eceb;
   margin: 0;
   line-height: 1.4;
 }
 
 html.light-mode .tb-notif-text p {
-  color: #0a1120;
+  color: #071c20;
 }
 
 .tb-notif-text span {

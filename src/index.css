@@ -1,13 +1,5 @@
 :root {
-  --accent-blue: #0a1120;
-  --accent-gold:  #d1634a;
-  --accent-grey: #a0aec0;
-  --card-bg: rgba(255, 255, 255, 0.05);
-  --input-bg: rgba(255, 255, 255, 0.08);
-  /* Gradients */
-  --gradient-blue: linear-gradient(135deg, #0a1120, #162a4a);
-
-  /* Shadows */
+  /* Brand colours live in App.css; these are layout primitives only. */
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
 
   /* Radii */
@@ -32,8 +24,8 @@ html {
 
 body {
   font-family: var(--font);
-  background-color: #0a1120;
-  color: #e4e7f0;
+  background-color: var(--brand-ink);
+  color: #e3eceb;
   font-size: 14px;
   line-height: 1.6;
   overflow-x: hidden;
@@ -47,7 +39,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--c-surface3);
+  background: rgba(var(--accent-rgb), 0.25);
   border-radius: var(--r-full);
 }
 
@@ -62,11 +54,11 @@ h6 {
 }
 
 p {
-  color: var(--c-text-muted);
+  color: var(--text-muted);
 }
 
 a {
-  color: var(--accent-gold);
+  color: var(--accent-ink);
   text-decoration: none;
 }
 
@@ -195,8 +187,8 @@ img {
 }
 
 .Toastify__toast--success .Toastify__toast-icon svg {
-  fill: var(--accent-gold) !important;
+  fill: var(--brand-teal-2) !important;
 }
 .Toastify__progress-bar--success {
-  background: var(--accent-blue) !important;
+  background: var(--brand-teal-2) !important;
 }

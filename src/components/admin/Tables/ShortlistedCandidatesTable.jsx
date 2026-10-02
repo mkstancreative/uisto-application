@@ -1,69 +1,84 @@
-import React from "react";
-import GeneralTable from "../../ui/GeneralTable/GeneralTable";
-import { formatDate } from "../../../utils/helpers";
+import { Eye } from 'lucide-react';
+import GeneralTable from '../../ui/GeneralTable/GeneralTable';
+import StatusBadge from '../../ui/StatusBadge/StatusBadge';
+import { formatOnlyDate } from '../../../utils/helpers';
+import { ScoreCell } from './JobApplicantTable';
+import { candidateName } from './shortlistFormat';
 
-const REC_COLOR = {
-    "Highly Recommended": { color: "#16a34a", bg: "rgba(34,197,94,0.12)" },
-    "Recommended": { color: "#16a34a", bg: "rgba(34,197,94,0.12)" },
-    "Marginally Recommended": { color: "#d97706", bg: "rgba(217,119,6,0.1)" },
-    "Not Recommended": { color: "#dc2626", bg: "rgba(239,68,68,0.1)" },
-};
+/** Ranked candidates from GET /shortlist/:jobId/candidates. */
+function ShortlistedCandidatesTable({ data = [], loading, meta, onPageChange, onLimitChange, onView }) {
+  const offset = meta ? (meta.page - 1) * meta.limit : 0;
 
-function ShortlistedCandidatesTable({ data = [], loading, meta, onPageChange, onLimitChange }) {
-    const columns = [
-        {
-            header: "#",
-            render: (_, i) => i + 1,
-        },
-        {
-            header: "Name",
-            render: (row) => (
-                <span style={{ fontWeight: 600 }}>{row.name}</span>
-            ),
-        },
-        {
-            header: "Email",
-            render: (row) => (
-                <span style={{ fontSize: 13, color: "var(--text-color-light)" }}>{row.email}</span>
-            ),
-        },
-        {
-            header: "Overall Score",
-            render: (row) => (
-                <span style={{ fontWeight: 700, fontSize: 15 }}>{row.overallScore ?? "—"} / 100</span>
-            ),
-        },
-        {
-            header: "Recommendation",
-            render: (row) => {
-                const style = REC_COLOR[row.recommendation] ?? { color: "#64748b", bg: "rgba(148,163,184,0.1)" };
-                return (
-                    <span style={{
-                        padding: "3px 12px", borderRadius: 20, fontSize: 12,
-                        fontWeight: 700, background: style.bg, color: style.color,
-                        whiteSpace: "nowrap",
-                    }}>
-                        {row.recommendation ?? "—"}
-                    </span>
-                );
-            },
-        },
-        {
-            header: "Date generation",
-            render: (row) => formatDate(row.appliedAt),
-        },
-    ];
+  const columns = [
+    {
+      header: '#',
+      render: (_, i) => <span className="rc-score-num">{offset + i + 1}</span>,
+    },
+    {
+      header: 'Candidate',
+      render: (row) => (
+        <div className="rc-cell-stack">
+          <button type="button" className="rc-link-btn" onClick={() => onView?.(row)}>
+            {candidateName(row)}
+          </button>
+          {row.applicationId && <span className="rc-cell-sub rc-mono">{row.applicationId}</span>}
+        </div>
+      ),
+    },
+    {
+      header: 'Contact',
+      render: (row) => (
+        <div className="rc-cell-stack">
+          <span className="rc-cell-sub">{row.personalInfo?.email ?? row.email ?? '—'}</span>
+          {(row.personalInfo?.phone ?? row.phone) && (
+            <span className="rc-cell-sub">{row.personalInfo?.phone ?? row.phone}</span>
+          )}
+        </div>
+      ),
+    },
+    {
+      header: 'AI Score',
+      render: (row) => <ScoreCell score={row.aiScore?.overallScore} />,
+    },
+    {
+      header: 'Recommendation',
+      render: (row) => {
+        const rec = row.aiScore?.aiRecommendation ?? row.aiScore?.recommendation;
+        return rec ? <StatusBadge status={rec} /> : '—';
+      },
+    },
+    {
+      header: 'AI Shortlist',
+      render: (row) => <StatusBadge status={row.aiScore?.shortlistStatus || 'Pending'} />,
+    },
+    {
+      header: 'Status',
+      render: (row) => <StatusBadge status={row.status || 'Submitted'} />,
+    },
+    {
+      header: 'Applied',
+      render: (row) => (row.appliedAt ? formatOnlyDate(row.appliedAt) : '—'),
+    },
+    {
+      header: '',
+      render: (row) => (
+        <button type="button" className="rc-btn rc-btn-sm" onClick={() => onView?.(row)}>
+          <Eye size={13} /> View
+        </button>
+      ),
+    },
+  ];
 
-    return (
-        <GeneralTable
-            columns={columns}
-            data={data}
-            loading={loading}
-            meta={meta}
-            onPageChange={onPageChange}
-            onLimitChange={onLimitChange}
-        />
-    );
+  return (
+    <GeneralTable
+      columns={columns}
+      data={data}
+      loading={loading}
+      meta={meta}
+      onPageChange={onPageChange}
+      onLimitChange={onLimitChange}
+    />
+  );
 }
 
 export default ShortlistedCandidatesTable;

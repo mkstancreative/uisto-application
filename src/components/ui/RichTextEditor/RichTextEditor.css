@@ -44,12 +44,12 @@
 }
 
 .rte-tool-btn--active {
-  background: rgba(209, 99, 74, 0.15); /* Soft tint of your gold/amber accent */
-  color: var(--accent-gold, #d1634a);
+  background: rgba(var(--accent-rgb), 0.15);
+  color: var(--accent-ink);
 }
 
 .rte-tool-btn--active:hover:not(.rte-tool-btn--disabled) {
-  background: rgba(209, 99, 74, 0.25);
+  background: rgba(var(--accent-rgb), 0.25);
 }
 
 .rte-tool-btn--disabled {
@@ -107,7 +107,7 @@
 }
 
 .rte-content blockquote {
-  border-left: 3px solid var(--accent-gold, #d1634a);
+  border-left: 3px solid var(--accent-ink);
   padding-left: 1em;
   margin: 0 0 0.75em 0;
   color: var(--text-muted, rgba(128, 128, 128, 0.8));
@@ -125,7 +125,7 @@
 
 .rte-content code {
   background: rgba(128, 128, 128, 0.1);
-  color: var(--accent-gold, #d1634a);
+  color: var(--accent-ink);
   padding: 2px 4px;
   border-radius: 4px;
   font-family: monospace;
@@ -178,7 +178,7 @@
 }
 
 .rte-link-input:focus {
-  border-color: var(--rte-accent, #4f46e5);
+  border-color: var(--rte-accent, var(--accent-ink));
 }
 
 .rte-link-ok,
@@ -192,9 +192,9 @@
 }
 
 .rte-link-ok {
-  background: var(--rte-accent, #4f46e5);
+  background: var(--rte-accent, var(--accent-ink));
   color: white;
-  border-color: var(--rte-accent, #4f46e5);
+  border-color: var(--rte-accent, var(--accent-ink));
 }
 
 .rte-link-ok:hover {
@@ -231,7 +231,7 @@
 
 /* Links in editor */
 .rte-content a {
-  color: var(--rte-accent, #4f46e5);
+  color: var(--rte-accent, var(--accent-ink));
   text-decoration: underline;
   cursor: pointer;
 }

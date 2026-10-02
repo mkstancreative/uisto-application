@@ -1,161 +1,109 @@
 .status-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+  white-space: nowrap;
+  border: 1px solid transparent;
+  --sb-fg: #475569;
+  --sb-bg: rgba(100, 116, 139, 0.1);
+  --sb-border: rgba(100, 116, 139, 0.18);
+  color: var(--sb-fg);
+  background: var(--sb-bg);
+  border-color: var(--sb-border);
 }
 
-/* Student */
-.status-badge.active {
-    background: #e6f7ee;
-    color: #0f9d58;
+.status-badge .status-dot {
+  flex-shrink: 0;
+  font-size: 10px;
 }
 
-.status-badge.inactive {
-    background: #ffebee;
-    color: #c62828;
+/* ── Tones (light mode) ── */
+.status-badge.tone-green {
+  --sb-fg: #15803d;
+  --sb-bg: rgba(34, 197, 94, 0.12);
+  --sb-border: rgba(34, 197, 94, 0.25);
 }
 
-.status-badge.graduated {
-    background: #e3f2fd;
-    color: #1976d2;
+.status-badge.tone-teal {
+  --sb-fg: #0f5e68;
+  --sb-bg: rgba(17, 96, 107, 0.1);
+  --sb-border: rgba(17, 96, 107, 0.25);
 }
 
-.status-badge.suspended {
-    background: #fff3e0;
-    color: #ef6c00;
+.status-badge.tone-blue {
+  --sb-fg: #1d4ed8;
+  --sb-bg: rgba(59, 130, 246, 0.1);
+  --sb-border: rgba(59, 130, 246, 0.22);
 }
 
-.status-badge.withdrawn {
-    background: #fdecea;
-    color: #d32f2f;
+.status-badge.tone-amber {
+  --sb-fg: #b45309;
+  --sb-bg: rgba(245, 158, 11, 0.12);
+  --sb-border: rgba(245, 158, 11, 0.28);
 }
 
-/* Attendance */
-.status-badge.present {
-    background: #e8f5e9;
-    color: #2e7d32;
+.status-badge.tone-red {
+  --sb-fg: #b91c1c;
+  --sb-bg: rgba(239, 68, 68, 0.1);
+  --sb-border: rgba(239, 68, 68, 0.24);
 }
 
-.status-badge.absent {
-    background: #ffebee;
-    color: #c62828;
+.status-badge.tone-violet {
+  --sb-fg: #6d28d9;
+  --sb-bg: rgba(139, 92, 246, 0.1);
+  --sb-border: rgba(139, 92, 246, 0.24);
 }
 
-.status-badge .late {
-    background: #fff8e1;
-    color: #f9a825;
+.status-badge.tone-slate {
+  --sb-fg: #475569;
+  --sb-bg: rgba(100, 116, 139, 0.1);
+  --sb-border: rgba(100, 116, 139, 0.2);
 }
 
-/* Fees */
-.status-badge.paid {
-    background: #e8f5e9;
-    color: #2e7d32;
+/* ── Tones (dark mode) ── */
+html:not(.light-mode) .status-badge.tone-green {
+  --sb-fg: #4ade80;
+  --sb-bg: rgba(34, 197, 94, 0.14);
+  --sb-border: rgba(74, 222, 128, 0.25);
 }
 
-.status-badge.unpaid {
-    background: #ffebee;
-    color: #c62828;
+html:not(.light-mode) .status-badge.tone-teal {
+  --sb-fg: #5eead4;
+  --sb-bg: rgba(45, 212, 191, 0.12);
+  --sb-border: rgba(94, 234, 212, 0.24);
 }
 
-.status-badge.pending {
-    background: #fff8e1;
-    color: #f9a825;
+html:not(.light-mode) .status-badge.tone-blue {
+  --sb-fg: #93c5fd;
+  --sb-bg: rgba(59, 130, 246, 0.16);
+  --sb-border: rgba(147, 197, 253, 0.24);
 }
 
-.status-badge.overdue {
-    background: #fdecea;
-    color: #d32f2f;
+html:not(.light-mode) .status-badge.tone-amber {
+  --sb-fg: #fcd34d;
+  --sb-bg: rgba(245, 158, 11, 0.15);
+  --sb-border: rgba(252, 211, 77, 0.24);
 }
 
-/* Enrollment */
-.status-badge.enrolled {
-    background: #e8f5e9;
-    color: #2e7d32;
+html:not(.light-mode) .status-badge.tone-red {
+  --sb-fg: #fca5a5;
+  --sb-bg: rgba(239, 68, 68, 0.15);
+  --sb-border: rgba(252, 165, 165, 0.24);
 }
 
-.status-badge.rejected {
-    background: #ffebee;
-    color: #c62828;
+html:not(.light-mode) .status-badge.tone-violet {
+  --sb-fg: #c4b5fd;
+  --sb-bg: rgba(139, 92, 246, 0.16);
+  --sb-border: rgba(196, 181, 253, 0.24);
 }
 
-/* Academic */
-.status-badge.passed {
-    background: #e8f5e9;
-    color: #2e7d32;
-}
-
-.status-badge.failed {
-    background: #ffebee;
-    color: #c62828;
-}
-
-.status-badge.in-progress {
-    background: #fff8e1;
-    color: #f9a825;
-}
-
-/* Admission */
-.status-badge.applied {
-    background: #e8eaf6;
-    color: #3949ab;
-}
-
-.status-badge.admitted {
-    background: #e0f7fa;
-    color: #00838f;
-}
-
-/* Transactions */
-.status-badge.initialized {
-    background: #fff8e1;
-    color: #f57f17;
-}
-
-.status-badge.completed {
-    background: #e8f5e9;
-    color: #2e7d32;
-}
-
-.status-badge.failed {
-    background: #ffebee;
-    color: #c62828;
-}
-
-.status-badge.success {
-    background: #e8f5e9;
-    color: #2e7d32;
-}
-
-/* Admins / Lecturers */
-.status-badge.enabled {
-    background: #e8f5e9;
-    color: #2e7d32;
-}
-
-.status-badge.disabled {
-    background: #ffebee;
-    color: #c62828;
-}
-
-.status-badge.ended {
-    background: #ffebee;
-    color: #c62828;
-}
-
-.status-badge.open {
-    background: #e8f5e9;
-    color: #2e7d32;
-}
-
-.status-badge.closed {
-    background: #ffebee;
-    color: #c62828;
-}
-
-.status-badge.awaiting {
-    background: #fff8e1;
-    color: #f9a825;
+html:not(.light-mode) .status-badge.tone-slate {
+  --sb-fg: #cbd5e1;
+  --sb-bg: rgba(148, 163, 184, 0.14);
+  --sb-border: rgba(203, 213, 225, 0.18);
 }

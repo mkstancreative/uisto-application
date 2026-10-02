@@ -12,7 +12,7 @@ export const gradePoint = (g) => GRADE_POINTS[(g ?? '').toUpperCase()] ?? 0;
 export const gradeColor = (g) => {
   const map = {
     A: '#22c55e',
-    B: '#6366f1',
+    B: '#11606b',
     C: '#f59e0b',
     D: '#f97316',
     E: '#ef4444',

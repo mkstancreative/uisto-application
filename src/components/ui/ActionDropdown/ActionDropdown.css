@@ -21,7 +21,7 @@
 
 .action-trigger:hover {
     background: var(--sb-item-hover, rgba(0, 0, 0, 0.05));
-    border-color: var(--accent-gold, #ffb830);
+    border-color: var(--accent-ink);
 }
 
 .action-dot {
@@ -33,7 +33,7 @@
 }
 
 .action-trigger:hover .action-dot {
-    background: var(--accent-gold, #ffb830);
+    background: var(--accent-ink);
 }
 
 /* Menu */
@@ -52,7 +52,7 @@
 }
 
 html:not(.light-mode) .action-menu {
-    background: #0e1a30;
+    background: #0b2a30;
     border-color: rgba(255, 255, 255, 0.07);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
@@ -74,16 +74,16 @@ html:not(.light-mode) .action-menu {
 }
 
 html:not(.light-mode) .action-item {
-    color: #a8b3cf;
+    color: #9db5b8;
 }
 
 .action-item:hover {
     background: rgba(0, 0, 0, 0.04);
-    color: #0a1120;
+    color: #071c20;
 }
 
 html:not(.light-mode) .action-item:hover {
-    background: rgba(255, 184, 48, 0.07);
+    background: rgba(var(--accent-rgb), 0.07);
     color: #fff;
 }
 

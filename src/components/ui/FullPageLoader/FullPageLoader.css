@@ -1,0 +1,25 @@
+.fpl-root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: var(--brand-ink);
+  color: #b7cfd1;
+  font-size: 14px;
+}
+
+.fpl-logo {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  border-radius: 50%;
+  background: #ffffff;
+  padding: 4px;
+}
+
+.fpl-spin {
+  color: var(--brand-lime);
+  animation: spin 0.9s linear infinite;
+}

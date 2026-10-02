@@ -2,8 +2,6 @@ import React, { useState, useRef, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import {
-    Search,
-    Bell,
     Sun,
     Moon,
     Menu,
@@ -13,22 +11,22 @@ import {
     ChevronDown,
 } from "lucide-react";
 
-import { useNotifications } from "../../hooks/useNotifications";
-import { formatDate } from "../../utils/helpers";
-
-/* ── Derive a human-readable page title from pathname ── */
-const titleFromPath = (pathname) => {
-    const segments = pathname.split("/").filter(Boolean);
-    if (!segments.length) return "Dashboard";
-    return segments
-        .map((s) =>
-            s
-                .split("-")
-                .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-                .join(" ")
-        )
-        .join(" › ");
+/* ── Page titles for the staff portal ── */
+const PAGE_TITLES = {
+    "/admin": "Dashboard",
+    "/admin/applications": "Applications",
+    "/admin/shortlist": "Shortlist by Job",
+    "/admin/shortlist-history": "Shortlist History",
+    "/admin/jobs": "Vacancies",
+    "/admin/positions": "Positions",
+    "/admin/requirements": "Requirements",
+    "/admin/subcadres": "Subcadres",
+    "/admin/staff": "Staff Users",
+    "/admin/profile": "My Account",
 };
+
+const titleFromPath = (pathname) =>
+    PAGE_TITLES[pathname.replace(/\/+$/, "")] ?? "Recruitment Portal";
 
 function Topbar({
     userName = "User",
@@ -43,44 +41,27 @@ function Topbar({
     const location = useLocation();
     const navigate = useNavigate();
     const { logout } = useAuth();
-    const [notifOpen, setNotifOpen] = useState(false);
     const [profileOpen, setProfileOpen] = useState(false);
+    const [signingOut, setSigningOut] = useState(false);
 
-    // Fetch dynamic notifications
-    const { data: notifRes } = useNotifications();
-    const fetchedNotifs = notifRes?.data ?? [];
-
-    // Local set tracking read notification IDs
-    const [readIds, setReadIds] = useState(new Set());
-
-    const notifRef = useRef(null);
     const profileRef = useRef(null);
 
-    const unreadCount = fetchedNotifs.filter((n) => !readIds.has(n.id)).length;
     const pageTitle = titleFromPath(location.pathname);
-    const pathSegments = location.pathname.split("/").filter(Boolean);
 
-    /* Close dropdowns on outside click */
+    /* Close dropdown on outside click */
     useEffect(() => {
         const handler = (e) => {
-            if (notifRef.current && !notifRef.current.contains(e.target)) setNotifOpen(false);
             if (profileRef.current && !profileRef.current.contains(e.target)) setProfileOpen(false);
         };
         document.addEventListener("mousedown", handler);
         return () => document.removeEventListener("mousedown", handler);
     }, []);
 
-    const markAllRead = () => {
-        const allIds = fetchedNotifs.map((n) => n.id);
-        setReadIds(new Set([...readIds, ...allIds]));
-    };
-
-    const markAsRead = (id) => {
-        setReadIds((prev) => {
-            const next = new Set(prev);
-            next.add(id);
-            return next;
-        });
+    const handleSignOut = async () => {
+        if (signingOut) return;
+        setSigningOut(true);
+        await logout();
+        navigate("/", { replace: true });
     };
 
     return (
@@ -100,13 +81,7 @@ function Topbar({
 
                 <div className="tb-left">
                     <div className="tb-page-title">{pageTitle}</div>
-                    {pathSegments.length > 0 && (
-                        <div className="tb-breadcrumb">
-                            Home {pathSegments.map((s, i) => (
-                                <span key={i}> › {s.charAt(0).toUpperCase() + s.slice(1)}</span>
-                            ))}
-                        </div>
-                    )}
+                    <div className="tb-breadcrumb">UISTO Careers › {pageTitle}</div>
                 </div>
             </div>
 
@@ -126,57 +101,11 @@ function Topbar({
                     </div>
                 </div>
 
-                {/* ── Notifications ── */}
-                <div style={{ position: "relative" }} ref={notifRef}>
-                    <button
-                        className="tb-icon-btn"
-                        aria-label={`Notifications${unreadCount ? ` (${unreadCount} unread)` : ""}`}
-                        onClick={() => { setNotifOpen((v) => !v); setProfileOpen(false); }}
-                    >
-                        <Bell size={17} />
-                        {unreadCount > 0 && <span className="tb-badge" />}
-                    </button>
-
-                    {notifOpen && (
-                        <div className="tb-notif-dropdown">
-                            <div className="tb-notif-header">
-                                <h4>Notifications {unreadCount > 0 && `(${unreadCount})`}</h4>
-                                {unreadCount > 0 && (
-                                    <span className="tb-notif-mark" onClick={markAllRead}>
-                                        Mark all read
-                                    </span>
-                                )}
-                            </div>
-
-                            {fetchedNotifs.length === 0 ? (
-                                <div className="tb-notif-empty">No notifications</div>
-                            ) : (
-                                fetchedNotifs.map((n) => {
-                                    const isRead = readIds.has(n.id);
-                                    return (
-                                        <div
-                                            key={n.id}
-                                            className="tb-notif-item"
-                                            onClick={() => markAsRead(n.id)}
-                                        >
-                                            <span className={`tb-notif-dot${isRead ? " read" : ""}`} />
-                                            <div className="tb-notif-text">
-                                                <p>{n.title ?? n.message ?? "New notification"}</p>
-                                                <span>{n.created_at ? formatDate(n.created_at) : "Just now"}</span>
-                                            </div>
-                                        </div>
-                                    );
-                                })
-                            )}
-                        </div>
-                    )}
-                </div>
-
                 {/* ── Profile / Avatar ── */}
                 <div className="tb-profile" ref={profileRef}>
                     <button
                         className="tb-avatar-btn"
-                        onClick={() => { setProfileOpen((v) => !v); setNotifOpen(false); }}
+                        onClick={() => setProfileOpen((v) => !v)}
                         aria-label="Profile menu"
                     >
                         <div className="tb-avatar">{userInitials}</div>
@@ -203,19 +132,19 @@ function Topbar({
                             <div 
                                 className="tb-pd-item" 
                                 onClick={() => {
-                                    const basePath = location.pathname.split('/')[1] || 'admin';
-                                    navigate(`/${basePath}/my-profile`);
+                                    setProfileOpen(false);
+                                    navigate("/admin/profile");
                                 }}
                             >
-                                <User size={15} /> My Profile
+                                <User size={15} /> My Account
                             </div>
                             <div className="tb-pd-divider" />
 
                             <div
                                 className="tb-pd-item danger"
-                                onClick={() => { logout(); navigate("/", { replace: true }); }}
+                                onClick={handleSignOut}
                             >
-                                <LogOut size={15} /> Sign Out
+                                <LogOut size={15} /> {signingOut ? "Signing out…" : "Sign Out"}
                             </div>
                         </div>
                     )}

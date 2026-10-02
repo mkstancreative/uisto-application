@@ -1,0 +1,518 @@
+/* ══════════════════════════════════════════
+   Account: password field, checklist, profile page, forced change page
+══════════════════════════════════════════ */
+
+/* ── Password input (admin variant) ── */
+.pw-row {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+  flex-wrap: wrap;
+}
+
+.pw-wrap {
+  position: relative;
+  flex: 1 1 200px;
+  min-width: 0;
+}
+
+.pw-input {
+  padding-right: 44px !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  letter-spacing: 0.02em;
+}
+
+.pw-toggle {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #64748b;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.pw-toggle:hover {
+  background: rgba(100, 116, 139, 0.12);
+}
+
+html:not(.light-mode) .pw-toggle {
+  color: #8ea3a6;
+}
+
+.pw-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 42px;
+  padding: 0 14px;
+  border-radius: 10px;
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  color: var(--accent-ink);
+  background: rgba(var(--accent-rgb), 0.08);
+  border: 1px solid rgba(var(--accent-rgb), 0.3);
+  transition: background 0.15s;
+}
+
+.pw-action-btn:hover:not(:disabled) {
+  background: rgba(var(--accent-rgb), 0.16);
+}
+
+.pw-action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Password input (public variant) ── */
+.pw-public {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pw-public .lp-field > label {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #33484b;
+}
+
+/* ── Checklist ── */
+.pw-checklist {
+  list-style: none;
+  margin: 2px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px 12px;
+}
+
+.pw-checklist li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #64748b;
+  transition: color 0.15s;
+}
+
+.pw-checklist li svg {
+  flex-shrink: 0;
+}
+
+.pw-checklist li.ok {
+  color: #15803d;
+}
+
+.pw-checklist li.bad {
+  color: #b91c1c;
+}
+
+html:not(.light-mode) .pw-checklist.admin li {
+  color: #8ea3a6;
+}
+
+html:not(.light-mode) .pw-checklist.admin li.ok {
+  color: #4ade80;
+}
+
+html:not(.light-mode) .pw-checklist.admin li.bad {
+  color: #f87171;
+}
+
+.pw-checklist.public li {
+  color: #5d7174;
+}
+
+.pw-checklist.public li.ok {
+  color: #1d6b3a;
+}
+
+@media (max-width: 420px) {
+  .pw-checklist {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── One-time password reveal (staff create / reset) ── */
+.pw-reveal {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.pw-reveal-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: rgba(var(--accent-rgb), 0.07);
+  border: 1px dashed rgba(var(--accent-rgb), 0.4);
+}
+
+.pw-reveal-value {
+  flex: 1 1 180px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  word-break: break-all;
+  color: #0f172a;
+  user-select: all;
+}
+
+html:not(.light-mode) .pw-reveal-value {
+  color: #e3eceb;
+}
+
+/* ══════════════════════════════════════════
+   PROFILE PAGE
+══════════════════════════════════════════ */
+.acct-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.acct-col {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+}
+
+@media (max-width: 1100px) {
+  .acct-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.acct-card {
+  padding: 18px 20px !important;
+}
+
+@media (max-width: 480px) {
+  .acct-card {
+    padding: 16px 14px !important;
+  }
+}
+
+.acct-card-head {
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.acct-card-head > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.acct-identity {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+  min-width: 0;
+}
+
+.acct-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 17px;
+  background: var(--accent-gradient);
+  color: var(--accent-contrast);
+}
+
+.acct-identity-text {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.acct-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+  overflow-wrap: anywhere;
+}
+
+html:not(.light-mode) .acct-name {
+  color: #e3eceb;
+}
+
+.acct-email {
+  font-size: 12.5px;
+  color: #64748b;
+  overflow-wrap: anywhere;
+}
+
+.acct-section-gap {
+  margin-top: 16px;
+}
+
+.acct-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.acct-note {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: #64748b;
+  margin: 0 0 14px;
+}
+
+html:not(.light-mode) .acct-note {
+  color: #8ea3a6;
+}
+
+/* Sessions */
+.acct-sessions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.acct-session {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+html:not(.light-mode) .acct-session {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.07);
+}
+
+.acct-session-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-ink);
+  background: rgba(var(--accent-rgb), 0.12);
+}
+
+.acct-session-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.acct-session-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+html:not(.light-mode) .acct-session-title {
+  color: #e3eceb;
+}
+
+.acct-session-meta {
+  font-size: 11.5px;
+  color: #64748b;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+html:not(.light-mode) .acct-session-meta {
+  color: #8ea3a6;
+}
+
+.acct-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border-radius: 9px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  color: #b91c1c;
+  background: transparent;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  transition: background 0.15s;
+}
+
+.acct-btn-ghost:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.acct-btn-ghost:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+html:not(.light-mode) .acct-btn-ghost {
+  color: #f87171;
+}
+
+@media (max-width: 480px) {
+  .acct-session {
+    flex-wrap: wrap;
+  }
+
+  .acct-session .acct-btn-ghost {
+    margin-left: 50px;
+  }
+}
+
+.acct-empty {
+  padding: 24px 12px;
+  text-align: center;
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+/* Danger zone */
+.acct-danger {
+  border-color: rgba(239, 68, 68, 0.25) !important;
+}
+
+.acct-danger-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.acct-danger-row p {
+  flex: 1 1 220px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: #475569;
+  margin: 0;
+}
+
+html:not(.light-mode) .acct-danger-row p {
+  color: #b6c4c6;
+}
+
+.acct-btn-danger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px;
+  border-radius: 10px;
+  border: none;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  color: #ffffff;
+  background: #dc2626;
+  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.25);
+  transition: background 0.15s;
+}
+
+.acct-btn-danger:hover:not(:disabled) {
+  background: #b91c1c;
+}
+
+.acct-btn-danger:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ══════════════════════════════════════════
+   FORCED PASSWORD CHANGE (standalone page)
+══════════════════════════════════════════ */
+.cpr-page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+  font-family: "Poppins", "Plus Jakarta Sans", system-ui, sans-serif;
+  background:
+    radial-gradient(circle at 15% 10%, rgba(var(--brand-lime-rgb), 0.12), transparent 40%),
+    radial-gradient(circle at 85% 90%, rgba(27, 123, 134, 0.35), transparent 45%),
+    linear-gradient(160deg, var(--brand-deep), var(--brand-ink));
+}
+
+.cpr-card.lp-modal {
+  max-width: 460px;
+  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.45);
+}
+
+@media (max-width: 420px) {
+  .cpr-card.lp-modal {
+    padding: 28px 18px 22px;
+    border-radius: 20px;
+  }
+}
+
+.cpr-note {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 12px 14px;
+  margin-bottom: 18px;
+  border-radius: 12px;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: #33484b;
+  background: var(--brand-mist);
+  border: 1px solid #dbe5e4;
+}
+
+.cpr-note svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--brand-teal-2);
+}
+
+.cpr-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid #e3eceb;
+  font-size: 12px;
+  color: #5d7174;
+}
+
+.cpr-footer strong {
+  color: var(--brand-ink);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}

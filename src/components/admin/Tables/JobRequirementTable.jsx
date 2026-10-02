@@ -1,60 +1,98 @@
-import React from 'react'
-import Toggler from '../../ui/Toggler/Toggler';
 import { Pencil, Trash2 } from 'lucide-react';
+import Toggler from '../../ui/Toggler/Toggler';
 import GeneralTable from '../../ui/GeneralTable/GeneralTable';
 import ActionDropdown from '../../ui/ActionDropdown/ActionDropdown';
+import StatusBadge from '../../ui/StatusBadge/StatusBadge';
+import { formatOnlyDate } from '../../../utils/helpers';
+import '../common/adminCommon.css';
 
-function JobRequirementTable({data, loading, onToggle, onEdit, onDelete, meta, onPageChange, onLimitChange}) {
-    const columns = [
+function JobRequirementTable({
+  data = [],
+  loading,
+  canEdit = false,
+  togglingId,
+  onToggle,
+  onEdit,
+  onDelete,
+  meta,
+  onPageChange,
+  onLimitChange,
+}) {
+  const columns = [
     {
-      header: "S/N",
+      header: 'S/N',
       render: (_, index) => {
-          const start = meta ? ((meta.page || 1) - 1) * (meta.limit || 10) : 0;
-          return start + index + 1;
+        const start = meta ? ((meta.page || 1) - 1) * (meta.limit || 10) : 0;
+        return start + index + 1;
       },
     },
-
     {
-      header: "Requirement Name",
-      render: (row) => <span className="fw-500">{row.name}</span>,
-    },
-    {
-      header: "Category",
-      render: (row) => row.cadre || "—",
-    },
-    {
-      header: "Status",
+      header: 'Requirement',
       render: (row) => (
-        <Toggler 
-          disabled={row.isSystem}
-          checked={row.isActive}
-          onChange={() => onToggle?.(row)}
-        />
+        <div style={{ maxWidth: 360 }}>
+          <span className="cell-main">{row.name}</span>
+        </div>
       ),
     },
     {
-      header: "Actions",
+      header: 'Cadre',
+      render: (row) => row.cadre || '—',
+    },
+    {
+      header: 'Active',
+      render: (row) =>
+        canEdit ? (
+          <Toggler
+            checked={Boolean(row.isActive)}
+            disabled={togglingId === row._id}
+            onChange={() => onToggle?.(row)}
+          />
+        ) : (
+          <StatusBadge status={row.isActive ? 'Active' : 'Inactive'} />
+        ),
+    },
+    {
+      header: 'Created',
       render: (row) => (
-        <ActionDropdown
-          actions={[
-            {
-              label: "Edit Requirement",
-              icon: <Pencil size={13} />,
-              onClick: () => onEdit?.(row),
-            },
-            {
-              label: "Delete",
-              icon: <Trash2 size={13} />,
-              onClick: () => onDelete?.(row),
-              danger: true,
-            },
-          ]}
-        />
+        <span className="cell-nowrap">{row.createdAt ? formatOnlyDate(row.createdAt) : '—'}</span>
       ),
     },
+    ...(canEdit
+      ? [
+          {
+            header: 'Actions',
+            render: (row) => (
+              <ActionDropdown
+                actions={[
+                  {
+                    label: 'Edit Requirement',
+                    icon: <Pencil size={13} />,
+                    onClick: () => onEdit?.(row),
+                  },
+                  {
+                    label: 'Delete',
+                    icon: <Trash2 size={13} />,
+                    onClick: () => onDelete?.(row),
+                    danger: true,
+                  },
+                ]}
+              />
+            ),
+          },
+        ]
+      : []),
   ];
 
-  return <GeneralTable columns={columns} data={data} loading={loading} meta={meta} onPageChange={onPageChange} onLimitChange={onLimitChange} />;
+  return (
+    <GeneralTable
+      columns={columns}
+      data={data}
+      loading={loading}
+      meta={meta}
+      onPageChange={onPageChange}
+      onLimitChange={onLimitChange}
+    />
+  );
 }
 
-export default JobRequirementTable
+export default JobRequirementTable;

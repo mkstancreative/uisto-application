@@ -1,152 +1,100 @@
 import axios from 'axios';
-import qs from 'qs';
-
-export const BASE_URL = import.meta.env.DEV
-  ? '/api'
-  : 'https://application.uisto.edu.ng/backend/';
-
-export const CAREER_BASE_URL = 'https://career-portal-uisto.onrender.com/api/v1/';
-// export const CAREER_BASE_URL = 'https://career.uisto.edu.ng/api/v1/';
+import {
+  API_BASE,
+  getAccessToken,
+  getRefreshToken,
+  notifySessionExpired,
+  refreshSession,
+} from './session';
 
 const api = axios.create({
-  baseURL: BASE_URL,
-  timeout: 30000,
-  withCredentials: true,
-  // FIX 1: Prevent &amp; encoding globally for all requests
-  paramsSerializer: (params) => qs.stringify(params, { encode: false }),
-  headers: {
-    'Content-Type': 'application/json',
-    Accept: 'application/json',
-  },
+  baseURL: API_BASE,
+  timeout: 60000,
+  headers: { Accept: 'application/json' },
 });
 
-const careerApi = axios.create({
-  baseURL: CAREER_BASE_URL,
-  timeout: 30000,
-  // FIX 1: Same fix for careerApi
-  paramsSerializer: (params) => qs.stringify(params, { encode: false }),
-  headers: {
-    'Content-Type': 'application/json',
-    Accept: 'application/json',
-  },
+/* Attach the access token to every request */
+api.interceptors.request.use((config) => {
+  const token = getAccessToken();
+  if (token && !config.headers.Authorization) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
 });
 
-const attachInterceptors = (instance) => {
-  instance.interceptors.request.use(
-    (config) => config,
-    (error) => Promise.reject(error),
-  );
+/** Normalised error every service call rejects with. */
+export class ApiError extends Error {
+  constructor(message, { status, data } = {}) {
+    super(message);
+    this.name = 'ApiError';
+    this.status = status;
+    this.data = data;
+  }
+}
 
-  instance.interceptors.response.use(
-    (response) => {
-      const contentType = response.headers?.['content-type'] ?? '';
-      const isHtml = contentType.includes('text/html');
-      const bodyIsHtml =
-        typeof response.data === 'string' &&
-        response.data.trimStart().startsWith('<');
-
-      if (isHtml || bodyIsHtml) {
-        const responseUrl = response?.request?.responseURL || '';
-        if (
-          responseUrl.toLowerCase().includes('login') ||
-          response.status === 401
-        ) {
-          try {
-            localStorage.removeItem('ems_auth');
-            window.dispatchEvent(new Event('ems:unauthorized'));
-          } catch (e) {
-            console.error(e);
-          }
-          return Promise.reject({
-            message: 'Your session has expired. Please log in again.',
-            status: 401,
-            isHtmlError: true,
-          });
-        } else {
-          return Promise.reject({
-            message: 'Server error.',
-            status: response.status || 500,
-            isHtmlError: true,
-          });
-        }
-      }
-
-      const sessionExpiredMessages = [
-        'session expired',
-        'unauthenticated',
-        'not logged in',
-        'login required',
-      ];
-      const bodyMessage = (
-        response.data?.message ??
-        response.data?.error ??
-        ''
-      ).toLowerCase();
-
-      if (sessionExpiredMessages.some((m) => bodyMessage.includes(m))) {
-        try {
-          localStorage.removeItem('ems_auth');
-          window.dispatchEvent(new Event('ems:unauthorized'));
-        } catch (e) {
-          console.log(e);
-        }
-        return Promise.reject({
-          message: 'Your session has expired. Please log in again.',
-          status: 401,
-        });
-      }
-
-      return response;
-    },
-
-    async (error) => {
-      if (!error.response) {
-        // FIX 2: `data` was referenced before being defined — was always undefined
-        return Promise.reject({
-          message: error?.message || 'Network error. Please check your connection.',
-        });
-      }
-
-      const { status, data } = error.response;
-
-      if (status === 401) {
-        try {
-          localStorage.removeItem('ems_auth');
-          window.dispatchEvent(new Event('ems:unauthorized'));
-        } catch (e) {
-          console.log(e);
-        }
-      }
-
-      if (status === 403) {
-        return Promise.reject({
-          message: 'You do not have permission to perform this action.',
-        });
-      }
-
-      if (status >= 500) {
-        return Promise.reject({
-          message: 'Server error. Please try again later.',
-        });
-      }
-
-      // FIX 3: Also forward the raw `data` so callers can inspect the
-      // original CakePHP error body (the "Missing passed parameter" message
-      // was being swallowed here before)
-      return Promise.reject({
-        message:
-          data?.message ||
-          data?.error ||
-          'Something went wrong. Please try again.',
-        status,
-        data,
-      });
-    },
-  );
+const toApiError = (error) => {
+  if (error instanceof ApiError) return error;
+  if (!error.response) {
+    const timedOut = error.code === 'ECONNABORTED';
+    return new ApiError(
+      timedOut
+        ? 'The server took too long to respond. Please try again.'
+        : 'Network error. Please check your connection.',
+      { status: 0 },
+    );
+  }
+  const { status, data } = error.response;
+  const fallback =
+    status >= 500
+      ? 'Server error. Please try again later.'
+      : status === 403
+        ? 'You do not have permission to perform this action.'
+        : 'Something went wrong. Please try again.';
+  return new ApiError(data?.message || fallback, { status, data });
 };
 
-attachInterceptors(api);
-attachInterceptors(careerApi);
+/*
+  On 401: refresh once, then retry the original request.
+  If the refresh fails, the session is over — clear it and tell the app.
+*/
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const original = error.config;
+    const status = error.response?.status;
+
+    if (
+      status === 401 &&
+      original &&
+      !original._retry &&
+      !original.skipAuthRefresh &&
+      getRefreshToken()
+    ) {
+      original._retry = true;
+      try {
+        const { accessToken } = await refreshSession();
+        original.headers.Authorization = `Bearer ${accessToken}`;
+        return api(original);
+      } catch {
+        notifySessionExpired();
+        return Promise.reject(
+          new ApiError('Your session has expired. Please sign in again.', { status: 401 }),
+        );
+      }
+    }
+
+    return Promise.reject(toApiError(error));
+  },
+);
+
+/** Human-readable message for any error thrown by a service call. */
+export const errorMessage = (err, fallback = 'Something went wrong. Please try again.') => {
+  if (!err) return fallback;
+  const reqs = err.data?.requirements;
+  if (Array.isArray(reqs) && reqs.length) {
+    return `Password must ${reqs.join(', ')}.`;
+  }
+  return err.message || fallback;
+};
 
 export default api;
-export { careerApi };

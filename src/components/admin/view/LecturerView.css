@@ -76,12 +76,12 @@ html:not(.light-mode) .lv-avatar {
 .lv-name {
     font-size: 18px;
     font-weight: 800;
-    color: #0a1120;
+    color: #071c20;
     margin: 0;
 }
 
 html:not(.light-mode) .lv-name {
-    color: #e4e7f0;
+    color: #e3eceb;
 }
 
 .lv-email {
@@ -121,8 +121,8 @@ html:not(.light-mode) .lv-name {
     font-weight: 600;
     padding: 3px 12px;
     border-radius: 20px;
-    background: rgba(99, 102, 241, 0.1);
-    color: #6366f1;
+    background: rgba(var(--accent-rgb), 0.1);
+    color: var(--accent-ink);
 }
 
 /* ── Info grid ── */
@@ -221,9 +221,9 @@ html:not(.light-mode) .lv-subjects-section {
     border-radius: 20px;
     font-size: 12px;
     font-weight: 600;
-    background: linear-gradient(135deg, rgba(255, 184, 48, 0.15), rgba(212, 96, 10, 0.1));
-    color: #d4600a;
-    border: 1px solid rgba(212, 96, 10, 0.15);
+    background: linear-gradient(135deg, rgba(var(--accent-rgb), 0.15), rgba(var(--accent-rgb), 0.1));
+    color: var(--accent-ink);
+    border: 1px solid rgba(var(--accent-rgb), 0.15);
 }
 
 .lv-no-subjects {

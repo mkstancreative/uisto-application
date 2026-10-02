@@ -37,7 +37,7 @@
 
 /* Checked State */
 .toggle-switch input:checked + .slider {
-  background-color: var(--accent-gold);
+  background-color: var(--accent);
 }
 
 .toggle-switch input:checked + .slider:before {

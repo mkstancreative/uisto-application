@@ -52,7 +52,7 @@
 /* Dark Mode */
 
 html:not(.light-mode) .modal-card {
-  background: #0e1a30;
+  background: #0b2a30;
   border: 1px solid rgba(255, 255, 255, 0.07);
 }
 
@@ -71,7 +71,7 @@ html:not(.light-mode) .modal-card {
 .modal-title {
   font-size: 16px;
   font-weight: 700;
-  color: #0a1120;
+  color: #071c20;
 
   display: flex;
   align-items: center;
@@ -79,7 +79,7 @@ html:not(.light-mode) .modal-card {
 }
 
 html:not(.light-mode) .modal-title {
-  color: #e4e7f0;
+  color: #e3eceb;
 }
 
 .modal-sub {
@@ -210,7 +210,7 @@ html:not(.light-mode) .modal-body::-webkit-scrollbar-thumb {
 }
 
 html:not(.light-mode) .modal-label {
-  color: #a8b3cf;
+  color: #9db5b8;
 }
 
 /* ══════════════════════════════════════════
@@ -228,7 +228,7 @@ html:not(.light-mode) .modal-label {
 
   background: #ffffff;
   font-size: 14px;
-  color: #0a1120 !important; /* Ensure visibility in light mode */
+  color: #071c20 !important; /* Ensure visibility in light mode */
   color-scheme: light; /* Ensures default date icons in light mode */
 
   outline: none;
@@ -241,13 +241,13 @@ html:not(.light-mode) .modal-label {
 html:not(.light-mode) .modal-input {
   background: rgba(255, 255, 255, 0.05);
   border-color: rgba(255, 255, 255, 0.1);
-  color: #e4e7f0 !important; /* Ensure visibility in dark mode */
+  color: #e3eceb !important; /* Ensure visibility in dark mode */
   color-scheme: dark; /* Natively turns date picker icons white in Chrome/Safari */
 }
 
 .modal-input:focus {
-  border-color: #ffb830;
-  box-shadow: 0 0 0 3px rgba(255, 184, 48, 0.14);
+  border-color: var(--accent-ink);
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.14);
   background: #ffffff;
 }
 
@@ -264,13 +264,13 @@ select.modal-input {
 }
 
 select.modal-input option {
-  color: #0a1120;
+  color: #071c20;
   background: #ffffff;
 }
 
 html:not(.light-mode) select.modal-input option {
-  background: #0e1a30;
-  color: #e4e7f0;
+  background: #0b2a30;
+  color: #e3eceb;
 }
 
 /* ══════════════════════════════════════════
@@ -317,31 +317,31 @@ select[multiple].modal-input option {
   border-radius: 6px;
   font-size: 13.5px;
   cursor: pointer;
-  color: #0a1120;
+  color: #071c20;
   background: transparent;
 }
 
 html:not(.light-mode) select[multiple].modal-input option {
-  color: #e4e7f0;
+  color: #e3eceb;
   background: transparent;
 }
 
 /* Highlighted / selected option */
 select[multiple].modal-input option:checked {
-  background: linear-gradient(135deg, #ffb830, #d4600a) !important;
-  color: #fff !important;
+  background: var(--accent-gradient) !important;
+  color: var(--accent-contrast) !important;
   font-weight: 600;
 }
 
 /* Hover */
 select[multiple].modal-input option:hover {
-  background: rgba(255, 184, 48, 0.12);
+  background: rgba(var(--accent-rgb), 0.12);
 }
 
 /* Focus ring matches rest of inputs */
 select[multiple].modal-input:focus {
-  border-color: #ffb830;
-  box-shadow: 0 0 0 3px rgba(255, 184, 48, 0.14);
+  border-color: var(--accent-ink);
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.14);
   background: #fff;
 }
 
@@ -376,8 +376,8 @@ input[type="file"].modal-input::file-selector-button {
   padding: 6px 12px;
   margin-right: 10px;
   border-radius: 6px;
-  background: linear-gradient(135deg, #ffb830, #d4600a);
-  color: white;
+  background: var(--accent-gradient);
+  color: var(--accent-contrast);
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
@@ -444,8 +444,8 @@ html:not(.light-mode) .section-title-divider {
   border-radius: 10px;
   border: none;
 
-  background: linear-gradient(135deg, #ffb830, #d4600a);
-  color: #fff;
+  background: var(--accent-gradient);
+  color: var(--accent-contrast);
 
   font-size: 13.5px;
   font-weight: 700;
@@ -454,11 +454,11 @@ html:not(.light-mode) .section-title-divider {
 
   transition: opacity 0.15s, box-shadow 0.15s;
 
-  box-shadow: 0 4px 14px rgba(212, 96, 10, 0.3);
+  box-shadow: 0 4px 14px rgba(var(--accent-rgb), 0.3);
 }
 
 .modal-submit:hover:not(:disabled) {
-  box-shadow: 0 6px 18px rgba(212, 96, 10, 0.4);
+  box-shadow: 0 6px 18px rgba(var(--accent-rgb), 0.4);
 }
 
 .modal-submit:disabled {
@@ -527,22 +527,22 @@ html:not(.light-mode) .subject-chips {
 }
 
 .subject-chip:hover {
-  border-color: #ffb830;
-  color: #d4600a;
+  border-color: var(--accent-ink);
+  color: var(--accent-ink);
 }
 
 .subject-chip.active {
-  background: linear-gradient(135deg, #ffb830, #d4600a);
+  background: var(--accent-gradient);
   border-color: transparent;
-  color: #fff;
+  color: var(--accent-contrast);
   font-weight: 700;
-  box-shadow: 0 2px 8px rgba(212, 96, 10, 0.25);
+  box-shadow: 0 2px 8px rgba(var(--accent-rgb), 0.25);
 }
 
 html:not(.light-mode) .subject-chip {
   background: rgba(255, 255, 255, 0.07);
   border-color: rgba(255, 255, 255, 0.1);
-  color: #a8b3cf;
+  color: #9db5b8;
 }
 
 /* ══════════════════════════════════════════
@@ -650,7 +650,7 @@ html:not(.light-mode) .log-entry {
 }
 
 html:not(.light-mode) .log-title {
-  color: #e4e7f0;
+  color: #e3eceb;
 }
 
 .log-desc {
@@ -677,7 +677,7 @@ html:not(.light-mode) .log-title {
 
 html:not(.light-mode) .log-type-badge {
   background: rgba(255, 255, 255, 0.08);
-  color: #a8b3cf;
+  color: #9db5b8;
 }
 
 .logs-empty {
@@ -816,9 +816,9 @@ html:not(.light-mode) .olevel-subjects-head {
 }
 
 .olevel-toggle-btn:hover {
-  border-color: #ffb830;
-  color: #d4600a;
-  background: rgba(255, 184, 48, 0.07);
+  border-color: var(--accent-ink);
+  color: var(--accent-ink);
+  background: rgba(var(--accent-rgb), 0.07);
 }
 
 .olevel-toggle-btn.active {
@@ -838,9 +838,9 @@ html:not(.light-mode) .olevel-toggle-btn {
 }
 
 html:not(.light-mode) .olevel-toggle-btn:hover {
-  border-color: #ffb830;
-  color: #ffb830;
-  background: rgba(255, 184, 48, 0.08);
+  border-color: var(--accent-ink);
+  color: var(--accent-ink);
+  background: rgba(var(--accent-rgb), 0.08);
 }
 
 html:not(.light-mode) .olevel-toggle-btn.active {

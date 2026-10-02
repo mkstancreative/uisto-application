@@ -1,24 +1,35 @@
-import { Navigate, Outlet } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { useAuth } from '../../hooks/useAuth';
+import FullPageLoader from '../ui/FullPageLoader/FullPageLoader';
 
-function ProtectedRoute({ allowedRoleIds = [] }) {
-    const { isAuthenticated, loading, user } = useAuth();
+/**
+ * Guards staff-only routes.
+ * - roles: limit to these staff roles (e.g. ['hrm']); others go to the dashboard.
+ * - allowPasswordChange: the one route reachable while mustChangePassword is set.
+ */
+function ProtectedRoute({ roles, allowPasswordChange = false }) {
+  const { status, user } = useAuth();
+  const location = useLocation();
 
-    if (loading) return null;
+  if (status === 'loading') return <FullPageLoader label="Restoring your session…" />;
 
-    if (!isAuthenticated) {
-        return <Navigate to="/" replace />;
-    }
+  if (status !== 'authenticated') {
+    return <Navigate to="/" replace state={{ openLogin: true, from: location }} />;
+  }
 
-    if (allowedRoleIds.length > 0) {
-        const userRoleId = Number(user?.role_id);
-        if (!allowedRoleIds.includes(userRoleId)) {
-            return <Navigate to="/" replace />;
-        }
-    }
+  if (user?.mustChangePassword && !allowPasswordChange) {
+    return <Navigate to="/change-password" replace />;
+  }
 
-    
-    return <Outlet />;
+  if (!user?.mustChangePassword && allowPasswordChange) {
+    return <Navigate to="/admin" replace />;
+  }
+
+  if (roles?.length && !roles.includes(user?.role)) {
+    return <Navigate to="/admin" replace />;
+  }
+
+  return <Outlet />;
 }
 
 export default ProtectedRoute;

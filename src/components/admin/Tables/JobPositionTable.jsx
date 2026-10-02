@@ -1,12 +1,20 @@
 import { GripVertical, Pencil, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ActionDropdown from "../../ui/ActionDropdown/ActionDropdown";
 import GeneralTable from "../../ui/GeneralTable/GeneralTable";
+import StatusBadge from "../../ui/StatusBadge/StatusBadge";
+import "../common/adminCommon.css";
 
+/**
+ * Positions list, ordered by displayOrder.
+ * With `canEdit`, rows can be dragged; `onReorder(dragged, target)` should return a
+ * promise and reject on failure so the optimistic order is rolled back.
+ */
 function JobPositionTable({
-  data,
-  subcadres = [],
+  data = [],
   loading,
+  canEdit = false,
+  subcadreName = () => "",
   onEdit,
   onDelete,
   onReorder,
@@ -14,160 +22,152 @@ function JobPositionTable({
   onPageChange,
   onLimitChange,
 }) {
-  const [localData, setLocalData] = useState(data || []);
+  /* The optimistic order is tied to the `data` array it was made from, so
+     a refetch (new array) discards it without syncing state in an effect. */
+  const [optimistic, setOptimistic] = useState(null);
+  const rows = optimistic && optimistic.source === data ? optimistic.rows : data;
+
   const [draggedIndex, setDraggedIndex] = useState(null);
   const [dragOverIndex, setDragOverIndex] = useState(null);
 
-  // Sync localData whenever the parent's filtered data changes
-  useEffect(() => {
-    setLocalData(data || []);
-  }, [data]);
-
-  const handleDragStart = (e, index) => {
-    setDraggedIndex(index);
-    e.dataTransfer.effectAllowed = "move";
-    // Only valid data formats
-    e.dataTransfer.setData("text/plain", index);
-  };
-
-  const handleDragOver = (e, index) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = "move";
-    if (draggedIndex === null || draggedIndex === index) return;
-    setDragOverIndex(index);
-  };
-
-  const handleDragLeave = () => {
+  const resetDrag = () => {
+    setDraggedIndex(null);
     setDragOverIndex(null);
   };
 
   const handleDrop = (e, index) => {
     e.preventDefault();
     if (draggedIndex === null || draggedIndex === index) {
-      setDraggedIndex(null);
-      setDragOverIndex(null);
+      resetDrag();
       return;
     }
 
-    const newData = [...localData];
-    const draggedItem = newData[draggedIndex];
+    const dragged = rows[draggedIndex];
+    const target = rows[index];
+    const next = [...rows];
+    next.splice(draggedIndex, 1);
+    next.splice(index, 0, dragged);
 
-    newData.splice(draggedIndex, 1);
-    newData.splice(index, 0, draggedItem);
+    setOptimistic({ source: data, rows: next });
+    resetDrag();
 
-    setLocalData(newData);
-
-    if (onReorder) {
-      onReorder(draggedItem, index, newData);
-    }
-
-    setDraggedIndex(null);
-    setDragOverIndex(null);
+    Promise.resolve(onReorder?.(dragged, target)).catch(() => setOptimistic(null));
   };
 
-  const handleDragEnd = () => {
-    setDraggedIndex(null);
-    setDragOverIndex(null);
+  const rowProps = (row, index) => {
+    if (!canEdit) return {};
+    return {
+      draggable: true,
+      onDragStart: (e) => {
+        setDraggedIndex(index);
+        e.dataTransfer.effectAllowed = "move";
+        e.dataTransfer.setData("text/plain", String(index));
+      },
+      onDragOver: (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "move";
+        if (draggedIndex !== null && draggedIndex !== index && dragOverIndex !== index) {
+          setDragOverIndex(index);
+        }
+      },
+      onDragLeave: () => setDragOverIndex(null),
+      onDrop: (e) => handleDrop(e, index),
+      onDragEnd: resetDrag,
+      style: {
+        cursor: "grab",
+        opacity: draggedIndex === index ? 0.35 : 1,
+        backgroundColor:
+          dragOverIndex === index ? "rgba(var(--accent-rgb), 0.08)" : undefined,
+        borderTop:
+          dragOverIndex === index && draggedIndex > index
+            ? "2px solid var(--accent-ink)"
+            : undefined,
+        borderBottom:
+          dragOverIndex === index && draggedIndex < index
+            ? "2px solid var(--accent-ink)"
+            : undefined,
+        transition: "background-color 0.2s, opacity 0.2s",
+      },
+    };
   };
-
-  const rowProps = (row, index) => ({
-    draggable: true,
-    onDragStart: (e) => handleDragStart(e, index),
-    onDragOver: (e) => handleDragOver(e, index),
-    onDragLeave: handleDragLeave,
-    onDrop: (e) => handleDrop(e, index),
-    onDragEnd: handleDragEnd,
-    style: {
-      cursor: "grab",
-      opacity: draggedIndex === index ? 0.3 : 1,
-      backgroundColor:
-        dragOverIndex === index ? "rgba(87, 0, 163, 0.05)" : undefined,
-      borderTop:
-        dragOverIndex === index && draggedIndex > index
-          ? "2px solid #5700A3"
-          : undefined,
-      borderBottom:
-        dragOverIndex === index && draggedIndex < index
-          ? "2px solid #5700A3"
-          : undefined,
-      transition: "background-color 0.2s, border 0.2s, opacity 0.2s",
-    },
-  });
 
   const columns = [
     {
-      header: "S/N",
-      render: (_, index) => {
-        const start = meta ? ((meta.page || 1) - 1) * (meta.limit || 10) : 0;
-        return (
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <GripVertical size={16} color="#aaa" style={{ cursor: "grab" }} />
-            <span>{start + index + 1}</span>
-          </div>
-        );
-      },
+      header: "Order",
+      render: (row) => (
+        <div className="drag-cell">
+          {canEdit && <GripVertical size={16} className="drag-grip" aria-hidden />}
+          <span>{row.displayOrder ?? "—"}</span>
+        </div>
+      ),
     },
     {
       header: "Title",
-      render: (row) => <span className="fw-500">{row.title}</span>,
+      render: (row) => <span className="cell-main">{row.title}</span>,
     },
     {
       header: "Cadre",
       render: (row) => row.cadre || "—",
     },
     {
-      header: "Sub-Cadre",
+      header: "Department / Subcadre",
       render: (row) => {
-        const subcadreId =
-          row.subcadre?._id || row.subcadre?.id || row.subcadre;
-        if (!subcadreId) return "—";
-        const match = subcadres.find(
-          (s) => String(s._id || s.id) === String(subcadreId),
-        );
-        return match ? match.name : row.subcadre?.name || subcadreId;
+        if (row.cadre === "Academic" || row.department) {
+          return row.department || <span className="cell-muted">—</span>;
+        }
+        return subcadreName(row.subcadre) || <span className="cell-muted">—</span>;
       },
     },
     {
-      header: "Department",
-      render: (row) => {
-        if (!row.department) return "—";
-        if (Array.isArray(row.department)) return row.department.join(", ");
-        return row.department?.name || row.department || "—";
-      },
+      header: "Experience",
+      render: (row) =>
+        row.requiredYearsExperience
+          ? `${row.requiredYearsExperience} yr${row.requiredYearsExperience === 1 ? "" : "s"}`
+          : <span className="cell-muted">None</span>,
     },
     {
       header: "Requirements",
       render: (row) => {
-        if (!row.requirements || !Array.isArray(row.requirements)) return "—";
-        return `${row.requirements.length} Requirement(s)`;
+        const n = Array.isArray(row.requirements) ? row.requirements.length : 0;
+        return <span className={`tag ${n ? "tag-accent" : "tag-slate"}`}>{n}</span>;
       },
     },
     {
-      header: "Actions",
+      header: "Status",
       render: (row) => (
-        <ActionDropdown
-          actions={[
-            {
-              label: "Edit Position",
-              icon: <Pencil size={13} />,
-              onClick: () => onEdit?.(row),
-            },
-            {
-              label: "Delete",
-              icon: <Trash2 size={13} />,
-              onClick: () => onDelete?.(row),
-              danger: true,
-            },
-          ]}
-        />
+        <StatusBadge status={row.isActive === false ? "Inactive" : "Active"} />
       ),
     },
+    ...(canEdit
+      ? [
+          {
+            header: "Actions",
+            render: (row) => (
+              <ActionDropdown
+                actions={[
+                  {
+                    label: "Edit Position",
+                    icon: <Pencil size={13} />,
+                    onClick: () => onEdit?.(row),
+                  },
+                  {
+                    label: "Delete",
+                    icon: <Trash2 size={13} />,
+                    onClick: () => onDelete?.(row),
+                    danger: true,
+                  },
+                ]}
+              />
+            ),
+          },
+        ]
+      : []),
   ];
 
   return (
     <GeneralTable
       columns={columns}
-      data={localData}
+      data={rows}
       loading={loading}
       meta={meta}
       rowProps={rowProps}

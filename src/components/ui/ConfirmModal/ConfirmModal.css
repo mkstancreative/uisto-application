@@ -23,7 +23,7 @@
 }
 
 html:not(.light-mode) .confirm-card {
-    background: #0e1a30;
+    background: #0b2a30;
     border: 1px solid rgba(255, 255, 255, 0.07);
 }
 
@@ -52,12 +52,12 @@ html:not(.light-mode) .confirm-card {
 .confirm-title {
     font-size: 17px;
     font-weight: 700;
-    color: #0a1120;
+    color: #071c20;
     margin-bottom: 8px;
 }
 
 html:not(.light-mode) .confirm-title {
-    color: #e4e7f0;
+    color: #e3eceb;
 }
 
 /* Message */

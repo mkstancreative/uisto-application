@@ -2,8 +2,8 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: var(--accent-gold-bg);
-  color: #fff;
+  background: var(--accent-gradient);
+  color: var(--accent-contrast);
 
   border: none;
   border-radius: 8px;
@@ -18,7 +18,7 @@
 
 /* Hover */
 .add-btn:hover {
-  background: #111a33;
+  background: #0b2a30;
   transform: translateY(-1px);
 }
 

@@ -44,8 +44,8 @@
 }
 
 .datatable-search:focus {
-  border-color: #ffb830;
-  box-shadow: 0 0 0 2px rgba(255, 184, 48, 0.15);
+  border-color: var(--accent-ink);
+  box-shadow: 0 0 0 2px rgba(var(--accent-rgb), 0.15);
 }
 
 /* ─────────────────────────────────────────
@@ -198,16 +198,16 @@
 }
 
 .page-btn:hover:not(:disabled) {
-  border-color: #ffb830;
-  color: #d4600a;
-  background: rgba(255, 184, 48, 0.06);
+  border-color: var(--accent-ink);
+  color: var(--accent-ink);
+  background: rgba(var(--accent-rgb), 0.06);
 }
 
 .page-btn.active {
-  background: linear-gradient(135deg, #ffb830, #d4600a);
-  color: #ffffff;
+  background: var(--accent-gradient);
+  color: var(--accent-contrast);
   border-color: transparent;
-  box-shadow: 0 2px 8px rgba(212, 96, 10, 0.25);
+  box-shadow: 0 2px 8px rgba(var(--accent-rgb), 0.25);
 }
 
 .page-btn:disabled {
@@ -244,7 +244,7 @@
 }
 
 .page-size-select:focus {
-  border-color: #ffb830;
+  border-color: var(--accent-ink);
 }
 
 /* ─────────────────────────────────────────
@@ -255,8 +255,8 @@
   padding: 6px 12px;
   border-radius: 6px;
   border: none;
-  background: rgba(255, 184, 48, 0.12);
-  color: #d4600a;
+  background: rgba(var(--accent-rgb), 0.12);
+  color: var(--accent-ink);
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
@@ -264,7 +264,7 @@
 }
 
 .table-action:hover {
-  background: rgba(255, 184, 48, 0.2);
+  background: rgba(var(--accent-rgb), 0.2);
 }
 
 /* ─────────────────────────────────────────
@@ -298,13 +298,13 @@
 ───────────────────────────────────────── */
 
 html:not(.light-mode) .general-table-wrapper {
-  background: #0e1a30;
+  background: #0b2a30;
   border-color: rgba(255, 255, 255, 0.07);
   box-shadow: 0 2px 20px rgba(0, 0, 0, 0.35);
 }
 
 html:not(.light-mode) .datatable-toolbar {
-  background: #0e1a30;
+  background: #0b2a30;
   border-bottom-color: rgba(255, 255, 255, 0.06);
 }
 
@@ -361,14 +361,14 @@ html:not(.light-mode) .page-btn {
 }
 
 html:not(.light-mode) .page-btn:hover:not(:disabled) {
-  border-color: #ffb830;
-  background: rgba(255, 184, 48, 0.08);
-  color: #ffb830;
+  border-color: var(--accent-ink);
+  background: rgba(var(--accent-rgb), 0.08);
+  color: var(--accent-ink);
 }
 
 html:not(.light-mode) .page-btn.active {
-  background: linear-gradient(135deg, #ffb830, #d4600a);
-  color: #fff;
+  background: var(--accent-gradient);
+  color: var(--accent-contrast);
   border-color: transparent;
 }
 
@@ -383,6 +383,6 @@ html:not(.light-mode) .page-size-select {
 }
 
 html:not(.light-mode) .table-action {
-  background: rgba(255, 184, 48, 0.08);
-  color: #ffb830;
+  background: rgba(var(--accent-rgb), 0.08);
+  color: var(--accent-ink);
 }

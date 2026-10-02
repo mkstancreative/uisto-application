@@ -1,111 +1,135 @@
-import React from "react";
+import { Eye, Pencil } from "lucide-react";
 import GeneralTable from "../../ui/GeneralTable/GeneralTable";
 import ActionDropdown from "../../ui/ActionDropdown/ActionDropdown";
 import StatusBadge from "../../ui/StatusBadge/StatusBadge";
-import { Eye, Pencil } from "lucide-react";
-import { formatDate } from "../../../utils/helpers";
 import Toggler from "../../ui/Toggler/Toggler";
+import { formatOnlyDate } from "../../../utils/helpers";
+import { daysUntil, deadlineLabel } from "../common/dates";
+import "../common/adminCommon.css";
 
+/**
+ * Vacancies list.
+ * `subcadreName(value)` resolves a populated subcadre, an id or null to a name.
+ */
 function JobTable({
-    data = [],
-    loading = false,
-    onView,
-    onEdit,
-    onToggleJobStatus,
-    changingId,
-    meta,
-    onPageChange,
-    onLimitChange,
+  data = [],
+  loading = false,
+  canEdit = false,
+  onView,
+  onEdit,
+  onToggle,
+  togglingId,
+  subcadreName = () => "",
+  meta,
+  onPageChange,
+  onLimitChange,
 }) {
-    const columns = [
-        {
-            header: "S/N",
-            render: (_, i) => {
-                const start = meta ? ((meta.page || 1) - 1) * (meta.limit || 10) : 0;
-                return start + i + 1;
+  const columns = [
+    {
+      header: "S/N",
+      render: (_, i) => {
+        const start = meta ? ((meta.page || 1) - 1) * (meta.limit || 10) : 0;
+        return start + i + 1;
+      },
+    },
+    {
+      header: "Position",
+      render: (row) => (
+        <div style={{ maxWidth: 260 }}>
+          <span className="cell-main">{row.position?.title ?? "Untitled position"}</span>
+        </div>
+      ),
+    },
+    {
+      header: "Cadre",
+      render: (row) => row.position?.cadre ?? "—",
+    },
+    {
+      header: "Department / Subcadre",
+      render: (row) => {
+        const dept = row.position?.department;
+        const sub = subcadreName(row.position?.subcadre);
+        if (dept) return dept;
+        if (sub) return sub;
+        return <span className="cell-muted">—</span>;
+      },
+    },
+    {
+      header: "Deadline",
+      render: (row) => {
+        if (!row.applicationDeadline) return "—";
+        const days = daysUntil(row.applicationDeadline);
+        const tone = days < 0 ? "tag-red" : days <= 3 ? "tag-amber" : "tag-slate";
+        return (
+          <div className="cell-nowrap">
+            <span>{formatOnlyDate(row.applicationDeadline)}</span>
+            <span className="cell-sub">
+              <span className={`tag ${tone}`}>{deadlineLabel(row.applicationDeadline)}</span>
+            </span>
+          </div>
+        );
+      },
+    },
+    {
+      header: "Published",
+      render: (row) => (
+        <span className="cell-nowrap">
+          {row.publishedDate ? formatOnlyDate(row.publishedDate) : "—"}
+        </span>
+      ),
+    },
+    {
+      header: "Status",
+      render: (row) => <StatusBadge status={row.isOpen ? "Open" : "Closed"} />,
+    },
+    {
+      header: "Active",
+      render: (row) =>
+        canEdit ? (
+          <Toggler
+            checked={Boolean(row.isActive)}
+            onChange={() => onToggle?.(row)}
+            disabled={togglingId === row._id}
+          />
+        ) : (
+          <StatusBadge status={row.isActive ? "Active" : "Inactive"} />
+        ),
+    },
+    {
+      header: "Actions",
+      render: (row) => (
+        <ActionDropdown
+          actions={[
+            {
+              label: "View",
+              icon: <Eye size={13} />,
+              onClick: () => onView?.(row),
             },
-        },
-        {
-            header: "Position",
-            render: (row) => (
-                <div style={{ fontWeight: 600, fontSize: 13, maxWidth: 240 }}>
-                    {row.position?.title ?? "—"}
-                </div>
-            ),
-        },
-        {
-            header: "Cadre",
-            render: (row) => row.position?.cadre ?? "—",
-        },
-        {
-            header: "School / Dept",
-            render: (row) => {
-                const fac = row.position?.faculty;
-                const dept = row.position?.department;
-                if (!fac && !dept) return "—";
-                return (
-                    <span style={{ fontSize: 12, color: "#64748b" }}>
-                        {[fac, dept].filter(Boolean).join(" / ")}
-                    </span>
-                );
-            },
-        },
-        {
-            header: "Deadline",
-            render: (row) =>
-                row.applicationDeadline
-                    ? formatDate(row.applicationDeadline)
-                    : "—",
-        },
-        {
-            header: "Status",
-            render: (row) => (
-                <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                    <StatusBadge status={row.isOpen ? "Open" : "Closed"} />
-                </div>
-            ),
-        },
-        {
-            header: "Job Status",
-            render: (row) => (
-                <Toggler
-                    checked={row.isOpen}
-                 onChange={(checked) =>
-    onToggleJobStatus?.(row, checked)
-}
-                    disabled={changingId === row._id}
-                />
-            ),
-        },
-        {
-            header: "Actions",
-            render: (row) => (
-                <ActionDropdown
-                    actions={[
-                        {
-                            label: "View",
-                            icon: <Eye size={13} />,
-                            onClick: () => onView?.(row),
-                        },
-                        {
-                            label: "Edit",
-                            icon: <Pencil size={13} />,
-                            onClick: () => onEdit?.(row),
-                        },
-                    ]}
-                />
-            ),
-        },
-    ];
+            ...(canEdit
+              ? [
+                  {
+                    label: "Edit",
+                    icon: <Pencil size={13} />,
+                    onClick: () => onEdit?.(row),
+                  },
+                ]
+              : []),
+          ]}
+        />
+      ),
+    },
+  ];
 
-    return <GeneralTable 
-        columns={columns} 
-        data={data} 
-        loading={loading} 
-        meta={meta}
-        onPageChange={onPageChange}
-        onLimitChange={onLimitChange}
-    />;
+  return (
+    <GeneralTable
+      columns={columns}
+      data={data}
+      loading={loading}
+      meta={meta}
+      onPageChange={onPageChange}
+      onLimitChange={onLimitChange}
+    />
+  );
 }
 
 export default JobTable;

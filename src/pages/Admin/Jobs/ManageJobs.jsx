@@ -4,195 +4,185 @@ import { toast } from 'react-toastify';
 import JobMutate from '../../../components/admin/Mutate/JobMutate';
 import JobTable from '../../../components/admin/Tables/JobTable';
 import JobView from '../../../components/admin/view/JobView';
+import ReadOnlyChip from '../../../components/admin/common/ReadOnlyChip';
+import TableError from '../../../components/admin/common/TableError';
+import { useDebouncedValue } from '../../../components/admin/common/useDebouncedValue';
+import { departmentsFrom, makeSubcadreName } from '../../../components/admin/common/refs';
 import AddButton from '../../../components/ui/AddButton/AddButton';
 import ConfirmModal from '../../../components/ui/ConfirmModal/ConfirmModal';
 import ResetButton from '../../../components/ui/ResetButton/ResetButton';
 import SearchInput from '../../../components/ui/SearchInput/SearchInput';
 import SelectFilter from '../../../components/ui/SelectFilters/SelectFilters';
+import { errorMessage } from '../../../api/api';
+import { useAuth } from '../../../hooks/useAuth';
 import { useModal } from '../../../hooks/useModal';
-import { useChangeJobStatus, useJobs } from '../../../hooks/useJobs';
+import { jobTitle, useJobs, useToggleJob } from '../../../hooks/useJobs';
+import { CADRES, useAllPositions, useAllSubcadres } from '../../../hooks/useConfig';
+import { canWrite } from '../../../utils/roles';
+import { toTableMeta } from '../../../utils/pagination';
+import '../../../components/admin/common/adminCommon.css';
 
-const INITIAL_PARAMS = {
-  page: 1,
-  limit: 10,
-  search: '',
-  cadre: '',
-  active: true,
-};
+const INITIAL_PARAMS = { page: 1, limit: 10, search: '', cadre: '', department: '' };
 
 function ManageJobs() {
+  const { user } = useAuth();
+  const editable = canWrite(user);
   const { openModal, closeModal } = useModal();
 
   const [params, setParams] = useState(INITIAL_PARAMS);
+  const [pendingToggle, setPendingToggle] = useState(null);
 
-  const [pendingStatusChange, setPendingStatusChange] = useState(null);
+  const search = useDebouncedValue(params.search);
+  const department = useDebouncedValue(params.department);
+  const query = useMemo(
+    () => ({ ...params, search: search.trim(), department: department.trim() }),
+    [params, search, department],
+  );
 
-  /* ── Mutation ── */
-  const { mutate: changeJobStatus, isPending: isChangingStatus } =
-    useChangeJobStatus();
+  const { data: response, isLoading, isError, error, refetch } = useJobs(query);
+  const jobs = response?.data ?? [];
+  const meta = toTableMeta(response, { page: params.page, limit: params.limit });
 
-  /* ── Data ── */
-  const { data: response, isLoading } = useJobs(params);
-  const jobs = useMemo(() => response?.data ?? [], [response]);
+  const { data: posRes } = useAllPositions();
+  const { data: subRes } = useAllSubcadres();
+  const departments = useMemo(() => departmentsFrom(posRes?.data ?? []), [posRes]);
+  const subcadreName = useMemo(() => makeSubcadreName(subRes?.data ?? []), [subRes]);
 
-  const totalRecords = response?.total ?? response?.pagination?.total ?? 0;
-  const currentPage =
-    response?.page ?? response?.pagination?.page ?? params.page;
-  const totalPages = Math.ceil(totalRecords / params.limit) || 1;
-  const meta = {
-    page: currentPage,
-    pages: totalPages,
-    count: totalRecords,
-    limit: params.limit,
-    hasPrev: currentPage > 1,
-    hasNext: currentPage < totalPages,
-  };
+  const { mutate: toggleJob, isPending: toggling } = useToggleJob();
 
-  /* ── Handlers ── */
-  const handleAdd = () =>
-    openModal(<JobMutate data={{}} closeModal={closeModal} />);
+  const update = (patch) => setParams((p) => ({ ...p, ...patch, page: 1 }));
 
-  const handleEdit = (row) =>
-    openModal(<JobMutate data={row} closeModal={closeModal} />);
+  const handleAdd = () => openModal(<JobMutate closeModal={closeModal} />);
+  const handleEdit = (row) => openModal(<JobMutate data={row} closeModal={closeModal} />);
+  const handleView = (row) => openModal(<JobView id={row._id} closeModal={closeModal} />);
 
-  const handleView = (row) =>
-    openModal(<JobView id={row._id} closeModal={closeModal} />);
-
-  const handleToggleJobStatus = (row, checked) => {
-    setPendingStatusChange({ job: row, newStatus: checked });
-  };
-
-  const confirmChangeStatus = () => {
-    if (!pendingStatusChange) return;
-    const { job, newStatus } = pendingStatusChange;
-
-    changeJobStatus(
-      { id: job._id, isOpen: newStatus },
-      {
-        onSuccess: () => {
-          toast.success('Job status changed successfully.');
-          setPendingStatusChange(null);
-        },
-        onError: (err) => {
-          toast.error(err?.message || 'Could not change job status.');
-          setPendingStatusChange(null);
-        },
+  const confirmToggle = () => {
+    if (!pendingToggle) return;
+    const closing = pendingToggle.isActive;
+    toggleJob(pendingToggle._id, {
+      onSuccess: (res) => {
+        toast.success(res?.message || (closing ? 'Vacancy closed.' : 'Vacancy reopened.'));
+        setPendingToggle(null);
       },
-    );
+      onError: (err) => {
+        toast.error(errorMessage(err, 'Could not change the vacancy status.'));
+        setPendingToggle(null);
+      },
+    });
   };
 
-  // SelectFilter passes the value string directly — no e.target.value needed
-  const handleCadreChange = (val) => {
-    setParams((p) => ({ ...p, cadre: val, page: 1 }));
-  };
+  const count = meta?.count ?? jobs.length;
+  const closing = pendingToggle?.isActive;
 
-  const handleActiveChange = (val) => {
-    setParams((p) => ({ ...p, active: val, page: 1 }));
-  };
-
-  /* ── Render ── */
   return (
     <>
       <div className="page-container">
-        {/* Header */}
         <div className="page-header">
           <div className="page-header-left">
-            <div className="page-icon orange">
+            <div className="page-icon">
               <Briefcase size={20} />
             </div>
             <div>
-              <h2 className="page-title">Manage Jobs</h2>
+              <h2 className="page-title">Vacancies</h2>
               <p className="page-sub">
-                {isLoading
-                  ? 'Loading…'
-                  : `${meta?.count ?? jobs.length} job posting${
-                      (meta?.count ?? jobs.length) !== 1 ? 's' : ''
-                    }`}
+                {isLoading ? 'Loading…' : `${count} vacanc${count === 1 ? 'y' : 'ies'}, open and closed`}
               </p>
             </div>
           </div>
           <div className="page-header-right">
-            <AddButton text="Add New Job" onClick={handleAdd} />
+            {editable ? (
+              <AddButton text="Open Vacancy" onClick={handleAdd} />
+            ) : (
+              <ReadOnlyChip />
+            )}
           </div>
         </div>
 
-        {/* Search */}
         <div className="filter-wrapper">
           <SearchInput
             value={params.search}
-            onChange={(val) =>
-              setParams((p) => ({
-                ...p,
-                search: typeof val === 'string' ? val : val.target.value,
-                page: 1,
-              }))
-            }
-            placeholder="Search by title, rank, or cadre…"
+            onChange={(val) => update({ search: val })}
+            onClear={() => update({ search: '' })}
+            placeholder="Search by position title…"
           />
         </div>
 
-        {/* Filters */}
-        <div className="filter-selects-block">
-          {/* Cadre */}
+        <div className="filter-selects-block wrap-mobile">
           <SelectFilter
             label="Cadre"
             value={params.cadre}
-            onChange={handleCadreChange}
+            onChange={(val) => update({ cadre: val })}
             options={[
-              { value: 'Academic', label: 'Academic' },
-              { value: 'Non-Academic', label: 'Non-Academic' },
+              { value: '', label: 'All cadres' },
+              ...CADRES.map((c) => ({ value: c, label: c })),
             ]}
           />
 
-          {/* Status */}
-          <SelectFilter
-            label="Status"
-            value={params.active}
-            onChange={handleActiveChange}
-            options={[
-              { value: 'true', label: 'Active' },
-              { value: 'false', label: 'Inactive' },
-            ]}
-          />
+          <div className="filter-container">
+            <label className="filter-label" htmlFor="jobs-dept-filter">
+              Department
+            </label>
+            <div className="select-wrapper">
+              <input
+                id="jobs-dept-filter"
+                className="filter-select filter-text"
+                list="jobs-dept-options"
+                placeholder="Any department"
+                value={params.department}
+                onChange={(e) => update({ department: e.target.value })}
+              />
+              <datalist id="jobs-dept-options">
+                {departments.map((d) => (
+                  <option key={d} value={d} />
+                ))}
+              </datalist>
+            </div>
+          </div>
 
           <ResetButton onClick={() => setParams(INITIAL_PARAMS)} />
         </div>
 
-        {/* Table */}
         <div className="table-wrapper">
-          <JobTable
-            data={jobs}
-            loading={isLoading}
-            onView={handleView}
-            onEdit={handleEdit}
-            onToggleJobStatus={handleToggleJobStatus}
-            changingId={pendingStatusChange?.job?._id}
-            meta={meta}
-            onPageChange={(page) => setParams((p) => ({ ...p, page }))}
-            onLimitChange={(limit) =>
-              setParams((p) => ({ ...p, limit, page: 1 }))
-            }
-          />
+          {isError ? (
+            <TableError message={errorMessage(error, 'Could not load vacancies.')} onRetry={refetch} />
+          ) : (
+            <JobTable
+              data={jobs}
+              loading={isLoading}
+              canEdit={editable}
+              onView={handleView}
+              onEdit={handleEdit}
+              onToggle={(row) => setPendingToggle(row)}
+              togglingId={toggling ? pendingToggle?._id : null}
+              subcadreName={subcadreName}
+              meta={meta}
+              onPageChange={(page) => setParams((p) => ({ ...p, page }))}
+              onLimitChange={(limit) => setParams((p) => ({ ...p, limit, page: 1 }))}
+            />
+          )}
         </div>
       </div>
 
-      {/* Confirm Modal */}
       <ConfirmModal
-        isOpen={Boolean(pendingStatusChange)}
-        variant="success"
-        title="Change Job Status"
+        isOpen={Boolean(pendingToggle)}
+        variant={closing ? 'danger' : 'success'}
+        title={closing ? 'Close vacancy?' : 'Reopen vacancy?'}
         message={
-          pendingStatusChange
-            ? `Are you sure you want to change the status of "${
-                pendingStatusChange.job.position?.title ?? 'this job'
-              }"?`
+          pendingToggle
+            ? closing
+              ? `"${jobTitle(pendingToggle)}" will stop accepting applications and disappear from the careers site. Existing applications are kept.`
+              : `"${jobTitle(pendingToggle)}" will accept applications again until its deadline${
+                  pendingToggle.applicationDeadline && new Date(pendingToggle.applicationDeadline) < new Date()
+                    ? ' — but that deadline has passed, so edit it first or it will stay closed to applicants'
+                    : ''
+                }.`
             : ''
         }
-        confirmText="Yes, Change"
+        confirmText={closing ? 'Close' : 'Reopen'}
         cancelText="Cancel"
-        isPending={isChangingStatus}
-        onConfirm={confirmChangeStatus}
-        onCancel={() => setPendingStatusChange(null)}
+        isPending={toggling}
+        onConfirm={confirmToggle}
+        onCancel={() => setPendingToggle(null)}
       />
     </>
   );

@@ -1,74 +1,62 @@
 import {
-  BarChart3,
-  Bell,
-  BookOpen,
-  DollarSign,
-  FlaskConical,
-  GraduationCap,
+  Briefcase,
+  ClipboardList,
   LayoutDashboard,
-  LibraryBig,
-  ListCheck,
-  Settings,
-  Stethoscope,
-  User2,
-  UserCheck,
-  Users,
+  ListChecks,
+  Settings2,
+  UserCog,
+  UserRound,
 } from 'lucide-react';
 
-export const ADMIN_NAV = [
+/*
+  `roles` limits an item to those staff roles; omit it for everyone.
+  Use getAdminNav(user) rather than this list directly.
+*/
+const ADMIN_NAV = [
   {
     section: 'Overview',
+    items: [{ label: 'Dashboard', icon: <LayoutDashboard size={18} />, path: '/admin' }],
+  },
+  {
+    section: 'Recruitment',
+    items: [
+      { label: 'Applications', icon: <ClipboardList size={18} />, path: '/admin/applications' },
+      {
+        label: 'AI Shortlisting',
+        icon: <ListChecks size={18} />,
+        children: [
+          { label: 'Shortlist by Job', path: '/admin/shortlist' },
+          { label: 'Shortlist History', path: '/admin/shortlist-history' },
+        ],
+      },
+      { label: 'Vacancies', icon: <Briefcase size={18} />, path: '/admin/jobs' },
+    ],
+  },
+  {
+    section: 'Configuration',
     items: [
       {
-        label: 'Dashboard',
-        icon: <LayoutDashboard size={18} />,
-        path: '/admin',
+        label: 'Job Setup',
+        icon: <Settings2 size={18} />,
+        children: [
+          { label: 'Positions', path: '/admin/positions' },
+          { label: 'Requirements', path: '/admin/requirements' },
+          { label: 'Subcadres', path: '/admin/subcadres' },
+        ],
       },
     ],
   },
-  
-
   {
     section: 'Administration',
     items: [
-
-      {
-        label: 'Manage Jobs',
-        icon: <UserCheck size={18} />,
-        children: [
-          { label: 'Job Requirements', path: '/admin/manage-requirements' },
-          { label: 'Job Sub Cadre', path: '/admin/manage-job-subcadre' },
-          { label: 'Job Positions', path: '/admin/manage-positions' },
-          { label: 'Manage Jobs', path: '/admin/manage-jobs' },
-          { label: 'Job Applicants', path: '/admin/manage-job-applicants' },
-          { label: 'Shortlist Per Job', path: '/admin/shortlist-management' },
-          {
-            label: 'Shortlisted Candidates',
-            path: '/admin/shortlisted-candidates',
-          },
-        ],
-      },
-      {
-        label: 'Settings',
-        icon: <Settings size={18} />,
-        children: [
-          { label: 'My Profile', path: '/admin/my-profile' },
-          { label: 'Change Password', path: '/admin/change-password' },
-          { label: 'Activity Logs', path: '/admin/activity-logs' },
-          { label: 'System Settings', path: '/admin/system-settings' },
-        ],
-      },
-    ],
-  },
-
-  {
-    section: 'Notifications',
-    items: [
-      {
-        label: 'Notifications',
-        icon: <Bell size={18} />,
-        path: '/admin/notifications',
-      },
+      { label: 'Staff Users', icon: <UserCog size={18} />, path: '/admin/staff', roles: ['hrm'] },
+      { label: 'My Account', icon: <UserRound size={18} />, path: '/admin/profile' },
     ],
   },
 ];
+
+export const getAdminNav = (user) =>
+  ADMIN_NAV.map((section) => ({
+    ...section,
+    items: section.items.filter((item) => !item.roles || item.roles.includes(user?.role)),
+  })).filter((section) => section.items.length > 0);

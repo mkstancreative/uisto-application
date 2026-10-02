@@ -37,14 +37,14 @@
 
 /* Light mode focus — brand blue */
 .search-input:focus {
-    border-color: #2d94c0;
-    box-shadow: 0 0 0 3px rgba(45, 148, 192, 0.13);
+    border-color: var(--accent-ink);
+    box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.13);
     background: #ffffff;
 }
 
 .search-input:focus + .search-icon,
 .search-box:focus-within .search-icon {
-    color: #2d94c0;
+    color: var(--accent-ink);
 }
 
 /* ═══════════════════════════════════
@@ -54,7 +54,7 @@
 html:not(.light-mode) .search-input {
     background: rgba(255, 255, 255, 0.05);
     border-color: rgba(255, 255, 255, 0.08);
-    color: #e4e7f0;
+    color: #e3eceb;
 }
 
 html:not(.light-mode) .search-input::placeholder {
@@ -63,8 +63,8 @@ html:not(.light-mode) .search-input::placeholder {
 
 /* Dark mode focus — same brand blue, darker well */
 html:not(.light-mode) .search-input:focus {
-    border-color: #2d94c0;
-    box-shadow: 0 0 0 3px rgba(45, 148, 192, 0.15);
+    border-color: var(--accent-ink);
+    box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.15);
     background: rgba(255, 255, 255, 0.08);
 }
 
@@ -73,7 +73,7 @@ html:not(.light-mode) .search-icon {
 }
 
 html:not(.light-mode) .search-box:focus-within .search-icon {
-    color: #2d94c0;
+    color: var(--accent-ink);
 }
 
 /* ── Clear button (shared) ── */

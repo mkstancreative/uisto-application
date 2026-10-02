@@ -1,338 +1,506 @@
-import React, { useState } from "react";
-import CustomModal from "../../ui/CustomModal/CustomModal";
-import { useJobApplicantById } from "../../../hooks/useJobs";
+import { useState } from "react";
+import { jsPDF } from "jspdf";
 import {
-    User, Mail, Phone, Briefcase, Award, FileText,
-    Calendar, Users, ExternalLink, AlertCircle,
-    GraduationCap, Layers, ShieldCheck, Download,
-    CheckCircle2, Clock, XCircle,
+    User, Mail, Phone, Briefcase, Award, FileText, Calendar, Users, ExternalLink,
+    AlertCircle, GraduationCap, Layers, ShieldCheck, Download, CheckCircle2, Clock,
+    ClipboardEdit, ChevronDown, ChevronUp, StickyNote, MailCheck, BellRing, AlertTriangle,
 } from "lucide-react";
+import CustomModal from "../../ui/CustomModal/CustomModal";
+import StatusBadge from "../../ui/StatusBadge/StatusBadge";
+import JobApplicantStatusMutate from "../Mutate/JobApplicantStatusMutate";
+import { useApplication } from "../../../hooks/useApplications";
+import { useAuth } from "../../../hooks/useAuth";
+import { canWrite, getInitials } from "../../../utils/roles";
+import { formatDate, formatOnlyDate } from "../../../utils/helpers";
+import { downloadCsv, fileSafe } from "../../../utils/csv";
+import { fileUrl } from "../../../api/session";
+import { errorMessage } from "../../../api/api";
+import { degreeLabel, flattenApplicationDetail } from "./applicationCsv";
 import "./LecturerView.css";
 import "./JobApplicantView.css";
-import StatusBadge from "../../ui/StatusBadge/StatusBadge";
-import { formatDate } from "../../../utils/helpers";
-import { jsPDF } from "jspdf";
 
-/* ── Resolve server doc URL ── */
-const resolveDocUrl = (filePath) => {
-    if (!filePath) return null;
-    return filePath.replace(/^.*[/\\]uploads[/\\]/, `https://career.uisto.edu.ng/uploads/`);
-};
+const REFEREE_COUNT = 3;
 
-/* ── Generate PDF from reference text ── */
-const downloadRefAsPdf = (ref, applicantName) => {
+const capitalize = (str) => (str ? String(str).charAt(0).toUpperCase() + String(str).slice(1) : str);
+
+/* ── Reference statement → PDF (wraps across pages) ── */
+const downloadRefAsPdf = (ref, ap) => {
     const doc = new jsPDF({ unit: "pt", format: "a4" });
     const margin = 50;
     const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
     const usableWidth = pageWidth - margin * 2;
 
-    // Header
-    doc.setFontSize(18);
     doc.setFont("helvetica", "bold");
-    doc.text("Reference Letter", margin, 60);
+    doc.setFontSize(18);
+    doc.text("Reference Statement", margin, 60);
 
-    doc.setFontSize(11);
     doc.setFont("helvetica", "normal");
-    doc.setTextColor(100);
-    doc.text(`Applicant: ${applicantName ?? "—"}`, margin, 82);
-    doc.text(`Referee: ${ref.name ?? "—"}`, margin, 98);
-    doc.text(`Email: ${ref.email ?? "—"}`, margin, 114);
-    if (ref.submittedAt) {
-        doc.text(`Submitted: ${formatDate(ref.submittedAt)}`, margin, 130);
-    }
+    doc.setFontSize(11);
+    doc.setTextColor(90);
+    const meta = [
+        `Applicant: ${ap?.fullName ?? "—"}${ap?.applicationId ? ` (${ap.applicationId})` : ""}`,
+        ap?.job?.position?.title ? `Vacancy: ${ap.job.position.title}` : null,
+        `Referee: ${ref.name ?? "—"}`,
+        `Email: ${ref.email ?? "—"}`,
+        ref.submittedAt ? `Submitted: ${formatDate(ref.submittedAt)}` : null,
+    ].filter(Boolean);
+    let y = 84;
+    meta.forEach((line) => {
+        doc.text(line, margin, y);
+        y += 16;
+    });
 
-    // Divider
     doc.setDrawColor(200);
-    doc.line(margin, 142, pageWidth - margin, 142);
+    doc.line(margin, y, pageWidth - margin, y);
+    y += 24;
 
-    // Body text
     doc.setTextColor(30);
     doc.setFontSize(12);
-    doc.setFont("helvetica", "normal");
-    const lines = doc.splitTextToSize(ref.referenceText ?? "", usableWidth);
-    doc.text(lines, margin, 162);
+    const lineHeight = 17;
+    doc.splitTextToSize(ref.referenceText ?? "", usableWidth).forEach((line) => {
+        if (y > pageHeight - margin) {
+            doc.addPage();
+            y = margin;
+        }
+        doc.text(line, margin, y);
+        y += lineHeight;
+    });
 
-    const fileName = `Reference_${(ref.name ?? "referee").replace(/\s+/g, "_")}.pdf`;
-    doc.save(fileName);
+    doc.save(`Reference_${fileSafe(ref.name ?? "referee")}_${fileSafe(ap?.applicationId ?? "")}.pdf`);
 };
 
+function LvRow({ label, value }) {
+    const empty = value === null || value === undefined || value === "";
+    return (
+        <div className="lv-row">
+            <span className="lv-row-label">{label}</span>
+            <span className="lv-row-value">{empty ? "—" : value}</span>
+        </div>
+    );
+}
+
+function ScoreBar({ label, value }) {
+    const has = value !== null && value !== undefined;
+    const pct = has ? Math.max(0, Math.min(100, Number(value) || 0)) : 0;
+    return (
+        <div className="av-score-row">
+            <div className="av-score-top">
+                <span>{label}</span>
+                <strong>{has ? `${value}/100` : "—"}</strong>
+            </div>
+            <div className="av-score-track" aria-hidden="true">
+                <span style={{ width: `${pct}%` }} />
+            </div>
+        </div>
+    );
+}
+
+function RefereeCard({ referee, ap }) {
+    const [open, setOpen] = useState(false);
+    const file = fileUrl(referee.referenceFile);
+    return (
+        <div className="av-referee-card">
+            <div className="av-referee-header">
+                <div style={{ minWidth: 0 }}>
+                    <div className="av-referee-name">{referee.name || "Unnamed referee"}</div>
+                    {referee.email && (
+                        <a className="av-referee-email" href={`mailto:${referee.email}`}>
+                            {referee.email}
+                        </a>
+                    )}
+                </div>
+                {referee.hasSubmitted ? (
+                    <span className="av-ref-badge submitted">
+                        <CheckCircle2 size={11} /> Submitted
+                    </span>
+                ) : (
+                    <span className="av-ref-badge pending">
+                        <Clock size={11} /> Pending
+                    </span>
+                )}
+            </div>
+
+            <div className="av-ref-meta">
+                {referee.submittedAt && (
+                    <span>
+                        <Calendar size={11} /> Submitted {formatDate(referee.submittedAt)}
+                    </span>
+                )}
+                <span>
+                    <BellRing size={11} /> {referee.reminderSent ? "Reminder sent" : "No reminder sent"}
+                </span>
+            </div>
+
+            {referee.referenceText && (
+                <div className="av-ref-text-box">
+                    <button
+                        type="button"
+                        className="av-ref-toggle"
+                        onClick={() => setOpen((v) => !v)}
+                        aria-expanded={open}
+                    >
+                        {open ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
+                        {open ? "Hide reference statement" : "Read reference statement"}
+                    </button>
+                    {open && <p className="av-ref-text">{referee.referenceText}</p>}
+                    <button
+                        type="button"
+                        className="av-ref-download-btn"
+                        onClick={() => downloadRefAsPdf(referee, ap)}
+                    >
+                        <Download size={13} /> Download as PDF
+                    </button>
+                </div>
+            )}
+
+            {file && (
+                <a href={file} target="_blank" rel="noreferrer" className="av-doc-link" style={{ marginTop: 10 }}>
+                    <FileText size={14} /> Reference file <ExternalLink size={12} />
+                </a>
+            )}
+
+            {!referee.hasSubmitted && (
+                <p className="av-ref-pending">
+                    <Clock size={12} /> Awaiting the referee's response.
+                </p>
+            )}
+        </div>
+    );
+}
+
 function JobApplicantView({ id, closeModal }) {
-    const { data: response, isLoading, isError, error } = useJobApplicantById(id);
+    const { user } = useAuth();
+    const writer = canWrite(user);
+    const { data: response, isLoading, isError, error, refetch } = useApplication(id);
     const ap = response?.data;
-    const [exporting, setExporting] = useState(false);
+    const [editing, setEditing] = useState(false);
 
-    const aiStatus = ap?.aiScore?.shortlistStatus || "Pending";
-    const appStatus = ap?.status || "Submitted";
+    if (editing && ap && writer) {
+        return (
+            <JobApplicantStatusMutate
+                applicant={ap}
+                closeModal={() => setEditing(false)}
+            />
+        );
+    }
 
-    const aiColorClass = {
-        "Auto-Shortlisted": "green",
-        "Rejected": "red",
-        "Manual Review": "orange",
-        "Pending": "gray",
-    }[aiStatus] ?? "gray";
+    const pi = ap?.personalInfo ?? {};
+    const ai = ap?.aiScore ?? {};
+    const exp = ap?.experience ?? {};
+    const pro = ap?.professionalInfo ?? {};
+    const job = ap?.job ?? {};
+    const pos = job.position ?? {};
+    const degrees = ap?.qualifications?.degrees ?? [];
+    const referees = ap?.referees ?? [];
+    const submittedRefs = ap?.ReactedReferees ?? referees.filter((r) => r.hasSubmitted).length;
+    const recommendation = ai.recommendation ?? ai.aiRecommendation;
+    const scored = ai.overallScore !== null && ai.overallScore !== undefined;
+    const requirements = (pos.requirements ?? []).map((r) => (typeof r === "string" ? r : r?.name)).filter(Boolean);
 
     const docs = ap?.documents ?? {};
     const docLinks = [
-        { label: "Resume", url: resolveDocUrl(docs.resume) },
-        { label: "Cover Letter", url: resolveDocUrl(docs.coverLetter) },
-        { label: "Supporting Document", url: resolveDocUrl(docs.supportingDocument) },
+        { label: "Cover letter", url: fileUrl(docs.coverLetter) },
+        { label: "Résumé / CV", url: fileUrl(docs.resume) },
+        { label: "Supporting document", url: fileUrl(docs.supportingDocument) },
     ].filter((d) => d.url);
 
     const handleExportCsv = () => {
-        if (!ap || exporting) return;
-        setExporting(true);
-        try {
-            exportApplicantToCsv(ap);
-        } finally {
-            setExporting(false);
-        }
+        if (!ap) return;
+        downloadCsv([flattenApplicationDetail(ap)], `application_${fileSafe(ap.applicationId ?? ap._id)}`);
     };
 
     return (
         <CustomModal
             isOpen
-            title="Applicant Details"
-            subtitle={isLoading ? "Loading…" : (ap?.fullName ?? "—")}
+            title="Application Details"
+            subtitle={isLoading ? "Loading…" : ap?.applicationId ?? ap?.fullName ?? ""}
+            icon={<User size={16} />}
             size="wide"
             onClose={closeModal}
             footer={
-                <div style={{ display: "flex", gap: 10 }}>
-                    {ap && (
-                        <button
-                            type="button"
-                            className="modal-submit"
-                            onClick={handleExportCsv}
-                            disabled={exporting}
-                            style={{ display: "flex", alignItems: "center", gap: 6 }}
-                        >
-                            <Download size={14} />
-                            {exporting ? "Exporting…" : "Export CSV"}
-                        </button>
-                    )}
+                <>
                     <button type="button" className="modal-cancel" onClick={closeModal}>
                         Close
                     </button>
-                </div>
+                    {ap && (
+                        <button
+                            type="button"
+                            className="modal-cancel av-footer-btn"
+                            onClick={handleExportCsv}
+                        >
+                            <Download size={14} /> Export CSV
+                        </button>
+                    )}
+                    {ap && writer && (
+                        <button
+                            type="button"
+                            className="modal-submit av-footer-btn"
+                            onClick={() => setEditing(true)}
+                        >
+                            <ClipboardEdit size={14} /> Update status
+                        </button>
+                    )}
+                </>
             }
         >
-            {/* Loading */}
             {isLoading && (
                 <div className="lv-loader">
                     <div className="spinner" />
-                    <p>Loading applicant details…</p>
+                    <p>Loading application…</p>
                 </div>
             )}
 
-            {/* Error */}
             {isError && !isLoading && (
                 <div className="lv-loader">
-                    <span style={{ fontSize: 32 }}>⚠️</span>
-                    <p style={{ color: "#ef4444", fontWeight: 600 }}>Failed to load applicant.</p>
-                    <p style={{ fontSize: 12, color: "#94a3b8" }}>{error?.message}</p>
+                    <AlertTriangle size={28} color="#ef4444" />
+                    <p style={{ fontWeight: 600 }}>{errorMessage(error, "Could not load this application.")}</p>
+                    <button type="button" className="modal-cancel" onClick={() => refetch()}>
+                        Try again
+                    </button>
                 </div>
             )}
 
-            {/* Content */}
+            {!isLoading && !isError && !ap && (
+                <div className="lv-loader">
+                    <p>Application not found.</p>
+                </div>
+            )}
+
             {!isLoading && !isError && ap && (
                 <div className="lv-wrapper">
-
                     {/* ── Hero ── */}
-                    <div className="lv-hero">
-                        <div className="av-icon">
-                            <User size={26} strokeWidth={1.6} />
-                        </div>
+                    <div className="lv-hero av-hero">
+                        <div className="av-icon">{getInitials(ap.fullName)}</div>
                         <div className="lv-hero-info">
-                            <h3 className="lv-name">{ap.fullName}</h3>
-                            <span className="lv-email"><Mail size={13} /> {ap.personalInfo?.email}</span>
-                            <span className="lv-email"><Phone size={13} /> {ap.personalInfo?.phone}</span>
-                            <div className="lv-status-row" style={{ marginTop: 6 }}>
-                                <StatusBadge status={appStatus} />
-                                <span className={`av-ai-pill ${aiColorClass}`}>
-                                    AI: {aiStatus}
-                                </span>
+                            <h3 className="lv-name">{ap.fullName || "—"}</h3>
+                            {(ap.email || pi.email) && (
+                                <span className="lv-email"><Mail size={13} /> {ap.email || pi.email}</span>
+                            )}
+                            {(ap.phone || pi.phone) && (
+                                <span className="lv-email"><Phone size={13} /> {ap.phone || pi.phone}</span>
+                            )}
+                            <div className="lv-status-row av-badges">
+                                <StatusBadge status={ap.status || "Submitted"} />
+                                <StatusBadge
+                                    status={ai.shortlistStatus || "Pending"}
+                                    label={`AI: ${ai.shortlistStatus || "Pending"}`}
+                                />
+                                {recommendation && <StatusBadge status={recommendation} />}
                             </div>
                         </div>
-                        {ap.applicationId && (
-                            <div className="av-app-id">
-                                <span className="av-app-id-label">Application ID</span>
-                                <span className="av-app-id-value">{ap.applicationId}</span>
-                            </div>
+                        <div className="av-app-id">
+                            {ap.applicationId && (
+                                <>
+                                    <span className="av-app-id-label">Application ID</span>
+                                    <span className="av-app-id-value">{ap.applicationId}</span>
+                                </>
+                            )}
+                            {ap.refNo && (
+                                <>
+                                    <span className="av-app-id-label">Ref. No.</span>
+                                    <span className="av-app-id-value">{ap.refNo}</span>
+                                </>
+                            )}
+                            {ap.appliedAt && (
+                                <span className="av-app-id-label" style={{ textTransform: "none" }}>
+                                    Applied {formatOnlyDate(ap.appliedAt)}
+                                </span>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* ── Vacancy ── */}
+                    <div className="lv-card">
+                        <div className="lv-card-head"><Briefcase size={14} /> Vacancy applied for</div>
+                        <div className="lv-rows">
+                            <LvRow label="Position" value={pos.title} />
+                            <LvRow label="Cadre" value={pos.cadre} />
+                            <LvRow label="Department" value={pos.department ?? ap.department} />
+                            <LvRow
+                                label="Experience required"
+                                value={
+                                    pos.requiredYearsExperience !== undefined && pos.requiredYearsExperience !== null
+                                        ? `${pos.requiredYearsExperience} year${pos.requiredYearsExperience === 1 ? "" : "s"}`
+                                        : null
+                                }
+                            />
+                            <LvRow label="Deadline" value={job.applicationDeadline ? formatDate(job.applicationDeadline) : null} />
+                            {job.isActive !== undefined && (
+                                <LvRow label="Vacancy" value={<StatusBadge status={job.isActive ? "Active" : "Inactive"} />} />
+                            )}
+                        </div>
+                        {job.description && <p className="av-job-desc">{job.description}</p>}
+                        {requirements.length > 0 && (
+                            <>
+                                <p className="av-missing-label" style={{ marginTop: 12 }}>Requirements</p>
+                                <ul className="av-list">
+                                    {requirements.map((r, i) => <li key={i}>{r}</li>)}
+                                </ul>
+                            </>
                         )}
                     </div>
 
-                    {/* ── Job Applied For ── */}
-                    <div className="lv-card">
-                        <div className="lv-card-head"><Briefcase size={14} /> Job Applied For</div>
-                        <div className="lv-rows">
-                            <LvRow label="Position" value={ap.job?.position?.title ?? ap.jobId?.position?.title} />
-                            <LvRow label="Cadre" value={ap.job?.position?.cadre ?? ap.jobId?.position?.cadre} />
-                            <LvRow label="Type" value={ap.job?.description ?? ap.jobId?.description} />
-                            <LvRow label="Deadline" value={formatDate(ap.job?.applicationDeadline ?? ap.jobId?.applicationDeadline)} />
-                            <LvRow label="Published" value={formatDate(ap.job?.publishedDate ?? ap.jobId?.publishedDate)} />
+                    <div className="lv-grid">
+                        {/* ── Personal ── */}
+                        <div className="lv-card">
+                            <div className="lv-card-head"><User size={14} /> Personal information</div>
+                            <div className="lv-rows">
+                                <LvRow label="First name" value={pi.firstName} />
+                                {pi.middleName && <LvRow label="Middle name" value={pi.middleName} />}
+                                <LvRow label="Last name" value={pi.lastName} />
+                                <LvRow label="Date of birth" value={pi.dateOfBirth ? formatOnlyDate(pi.dateOfBirth) : null} />
+                                <LvRow label="Gender" value={capitalize(pi.gender)} />
+                                <LvRow label="Marital status" value={capitalize(pi.maritalStatus)} />
+                                <LvRow label="State of origin" value={ap.stateOfOrigin ?? pi.stateOfOrigin} />
+                                <LvRow label="LGA" value={ap.lga ?? pi.lga} />
+                            </div>
                         </div>
-                        {/* Job requirements */}
-                        {(() => {
-                            const reqs = ap.job?.position?.requirements ?? ap.jobId?.position?.requirements ?? [];
-                            if (!reqs.length) return null;
-                            return (
-                                <div style={{ marginTop: 10 }}>
-                                    <p className="av-missing-label" style={{ color: "#64748b" }}>Job Requirements</p>
-                                    <ul style={{ margin: 0, paddingLeft: 18, display: "flex", flexDirection: "column", gap: 5 }}>
-                                        {reqs.map((r, i) => (
-                                            <li key={i} style={{ fontSize: 13, color: "#475569" }}>
-                                                {typeof r === "string" ? r : r.name}
-                                            </li>
-                                        ))}
-                                    </ul>
+
+                        {/* ── Interview ── */}
+                        <div className="lv-card">
+                            <div className="lv-card-head"><Calendar size={14} /> Interview</div>
+                            <div className="lv-rows">
+                                <LvRow label="Interview date" value={ap.interviewDate ? formatDate(ap.interviewDate) : "Not scheduled"} />
+                                <LvRow
+                                    label="Invitation"
+                                    value={
+                                        ap.inviteSent ? (
+                                            <span className="av-chip"><MailCheck size={11} /> Invite sent</span>
+                                        ) : (
+                                            "Not sent"
+                                        )
+                                    }
+                                />
+                                <LvRow label="Ref. No." value={ap.refNo} />
+                                <LvRow label="Applied" value={ap.appliedAt ? formatDate(ap.appliedAt) : null} />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* ── AI assessment ── */}
+                    <div className="lv-card">
+                        <div className="lv-card-head"><Award size={14} /> AI assessment</div>
+                        {scored ? (
+                            <>
+                                <div className="av-ai-top">
+                                    <div className="av-ai-overall">
+                                        <span className="av-ai-overall-num">{ai.overallScore}</span>
+                                        <span className="av-ai-overall-label">overall / 100</span>
+                                    </div>
+                                    <div className="av-badges">
+                                        {recommendation && <StatusBadge status={recommendation} />}
+                                        <StatusBadge status={ai.shortlistStatus || "Pending"} />
+                                    </div>
                                 </div>
-                            );
-                        })()}
-                    </div>
-
-                    {/* ── Personal Information ── */}
-                    <div className="lv-card">
-                        <div className="lv-card-head"><User size={14} /> Personal Information</div>
-                        <div className="lv-rows">
-                            <LvRow label="Full Name" value={ap.fullName} />
-                            <LvRow label="Date of Birth" value={formatDate(ap.personalInfo?.dateOfBirth)} />
-                            <LvRow label="Gender" value={ap.personalInfo?.gender ? capitalize(ap.personalInfo.gender) : undefined} />
-                            <LvRow label="Marital Status" value={ap.personalInfo?.maritalStatus ? capitalize(ap.personalInfo.maritalStatus) : undefined} />
-                            <LvRow label="Email" value={ap.personalInfo?.email} />
-                            <LvRow label="Phone" value={ap.personalInfo?.phone} />
-                        </div>
-                    </div>
-
-                    {/* ── Application Info ── */}
-                    <div className="lv-card">
-                        <div className="lv-card-head"><Calendar size={14} /> Application Info</div>
-                        <div className="lv-rows">
-                            <LvRow label="Application ID" value={ap.applicationId} />
-                            <LvRow label="Applied At" value={formatDate(ap.appliedAt)} />
-                            <LvRow label="Last Updated" value={formatDate(ap.updatedAt)} />
-                            <LvRow label="Viewed At" value={ap.viewedAt ? formatDate(ap.viewedAt) : "Not yet viewed"} />
-                            <LvRow label="Status" value={<StatusBadge status={appStatus} />} />
-                            {ap.adminNotes && <LvRow label="Admin Notes" value={ap.adminNotes} />}
-                        </div>
+                                <div className="av-score-grid">
+                                    <ScoreBar label="Qualifications" value={ai.qualificationScore} />
+                                    <ScoreBar label="Experience" value={ai.experienceScore} />
+                                    <ScoreBar label="Publications" value={ai.publicationScore} />
+                                    <ScoreBar label="Professional" value={ai.professionalScore} />
+                                </div>
+                                {Array.isArray(ai.missingRequirements) && (
+                                    <>
+                                        <p className="av-missing-label" style={{ marginTop: 14 }}>Missing requirements</p>
+                                        {ai.missingRequirements.length ? (
+                                            <ul className="av-list">
+                                                {ai.missingRequirements.map((r, i) => (
+                                                    <li key={i} className="av-missing-item">
+                                                        <AlertCircle size={12} /> {r}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        ) : (
+                                            <p className="lv-no-subjects">None — every listed requirement is met.</p>
+                                        )}
+                                    </>
+                                )}
+                            </>
+                        ) : (
+                            <p className="lv-no-subjects">
+                                Not scored yet. Scores appear after a shortlist is generated for this vacancy.
+                            </p>
+                        )}
                     </div>
 
                     {/* ── Qualifications ── */}
                     <div className="lv-card">
                         <div className="lv-card-head"><GraduationCap size={14} /> Qualifications</div>
-                        <div className="lv-rows">
-                            <LvRow label="Has PhD" value={ap.qualifications?.hasPhd ? "Yes" : "No"} />
-                            <LvRow label="NYSC Completed" value={ap.qualifications?.nysc?.completed ? "Yes" : "No"} />
-                        </div>
-                        {ap.qualifications?.degrees?.length > 0 && (
-                            <div style={{ marginTop: 12 }}>
-                                <p className="av-missing-label" style={{ color: "#64748b" }}>Degrees</p>
-                                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                                    {ap.qualifications.degrees.map((deg, i) => (
-                                        <div key={i} className="av-degree-card">
-                                            <span className="av-degree-type">{capitalize(deg.degreeType)}</span>
-                                            <span className="av-degree-inst">{deg.institution}</span>
-                                            {deg.programme && (
-                                                <span className="av-degree-year" style={{ color: "#64748b" }}>
-                                                    {deg.programme.replace(/_/g, " ")}
+                        {degrees.length ? (
+                            <div className="av-degree-list">
+                                {degrees.map((d, i) => (
+                                    <div key={i} className="av-degree-card">
+                                        <span className="av-degree-type">{degreeLabel(d.degreeType) || "Degree"}</span>
+                                        <div className="av-degree-body">
+                                            <span className="av-degree-inst">{d.institution || "—"}</span>
+                                            {(d.programme || d.department) && (
+                                                <span className="av-degree-year">
+                                                    {[d.programme, d.department && d.department !== d.programme ? d.department : null]
+                                                        .filter(Boolean)
+                                                        .join(" · ")
+                                                        .replace(/_/g, " ")}
                                                 </span>
                                             )}
-                                            {(deg.yearAwarded || deg.year) && (
-                                                <span className="av-degree-year">{deg.yearAwarded ?? deg.year}</span>
-                                            )}
                                         </div>
-                                    ))}
-                                </div>
+                                        <span className="av-degree-year">
+                                            {[d.degreeClass, d.yearAwarded].filter(Boolean).join(" · ")}
+                                        </span>
+                                    </div>
+                                ))}
                             </div>
+                        ) : (
+                            <p className="lv-no-subjects">No degrees listed.</p>
                         )}
                     </div>
 
-                    {/* ── Experience ── */}
-                    <div className="lv-card">
-                        <div className="lv-card-head"><Layers size={14} /> Experience</div>
-                        <div className="lv-rows">
-                            <LvRow label="Industry Years" value={ap.experience?.industryYears ?? 0} />
-                            <LvRow label="Teaching Years" value={ap.experience?.teachingYears ?? 0} />
-                            <LvRow label="Research Years" value={ap.experience?.researchYears ?? 0} />
-                            <LvRow label="Publications" value={ap.experience?.publications ?? 0} />
-                            {ap.experience?.postQualificationExperience > 0 && (
-                                <LvRow label="Post-Qualification Exp." value={`${ap.experience.postQualificationExperience} years`} />
-                            )}
-                        </div>
-                    </div>
-
-                    {/* ── Professional Info ── */}
-                    <div className="lv-card">
-                        <div className="lv-card-head"><ShieldCheck size={14} /> Professional Info</div>
-                        <div className="lv-rows">
-                            <LvRow label="ICT Proficient" value={ap.professionalInfo?.ictProficiency ? "Yes" : "No"} />
-                        </div>
-
-                        {ap.professionalInfo?.computerSkills?.length > 0 && (
-                            <div style={{ marginTop: 10 }}>
-                                <p className="av-missing-label" style={{ color: "#64748b" }}>Computer Skills</p>
-                                <div className="av-tag-list">
-                                    {ap.professionalInfo.computerSkills.map((s, i) => (
-                                        <span key={i} className="av-tag">{s}</span>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {ap.professionalInfo?.certifications?.length > 0 && (
-                            <div style={{ marginTop: 10 }}>
-                                <p className="av-missing-label" style={{ color: "#64748b" }}>Certifications</p>
-                                <div className="av-tag-list">
-                                    {ap.professionalInfo.certifications.map((c, i) => (
-                                        <span key={i} className="av-tag">{c}</span>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-                    </div>
-
-                    {/* ── AI Assessment ── */}
-                    {ap.aiScore && (
+                    <div className="lv-grid">
+                        {/* ── Experience ── */}
                         <div className="lv-card">
-                            <div className="lv-card-head"><Award size={14} /> AI Assessment</div>
+                            <div className="lv-card-head"><Layers size={14} /> Experience</div>
                             <div className="lv-rows">
-                                <LvRow label="AI Status" value={ap.aiScore.shortlistStatus} />
-                                {ap.aiScore.overallScore != null && <LvRow label="Overall Score" value={`${ap.aiScore.overallScore} / 100`} />}
-                                {ap.aiScore.qualificationScore != null && <LvRow label="Qualification" value={`${ap.aiScore.qualificationScore} / 100`} />}
-                                {ap.aiScore.experienceScore != null && <LvRow label="Experience" value={`${ap.aiScore.experienceScore} / 100`} />}
-                                {ap.aiScore.publicationScore != null && <LvRow label="Publication" value={`${ap.aiScore.publicationScore} / 100`} />}
-                                {ap.aiScore.professionalScore != null && <LvRow label="Professional" value={`${ap.aiScore.professionalScore} / 100`} />}
-                                {(ap.aiScore.recommendation ?? ap.aiScore.aiRecommendation) && (
-                                    <LvRow label="Recommendation" value={ap.aiScore.recommendation ?? ap.aiScore.aiRecommendation} />
-                                )}
+                                <LvRow label="Teaching" value={`${exp.teachingYears ?? 0} yrs`} />
+                                <LvRow label="Research" value={`${exp.researchYears ?? 0} yrs`} />
+                                <LvRow label="Industry" value={`${exp.industryYears ?? 0} yrs`} />
+                                <LvRow label="Post-qualification" value={`${exp.postQualificationExperience ?? 0} yrs`} />
+                                <LvRow label="Publications" value={exp.publications ?? 0} />
                             </div>
+                        </div>
 
-                            {ap.aiScore.missingRequirements?.length > 0 && (
-                                <div style={{ marginTop: 12 }}>
-                                    <p className="av-missing-label">Missing Requirements</p>
-                                    <ul style={{ margin: 0, paddingLeft: 18, display: "flex", flexDirection: "column", gap: 5 }}>
-                                        {ap.aiScore.missingRequirements.map((r, i) => (
-                                            <li key={i} className="av-missing-item">
-                                                <AlertCircle size={12} /> {r}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
+                        {/* ── Professional ── */}
+                        <div className="lv-card">
+                            <div className="lv-card-head"><ShieldCheck size={14} /> Professional</div>
+                            <div className="lv-rows">
+                                <LvRow
+                                    label="ICT proficient"
+                                    value={pro.ictProficiency === undefined ? null : pro.ictProficiency ? "Yes" : "No"}
+                                />
+                            </div>
+                            {pro.computerSkills?.length > 0 && (
+                                <>
+                                    <p className="av-missing-label" style={{ marginTop: 12 }}>Computer skills</p>
+                                    <div className="av-tag-list">
+                                        {pro.computerSkills.map((s, i) => <span key={i} className="av-tag">{s}</span>)}
+                                    </div>
+                                </>
+                            )}
+                            {pro.certifications?.length > 0 && (
+                                <>
+                                    <p className="av-missing-label" style={{ marginTop: 12 }}>Certifications</p>
+                                    <div className="av-tag-list">
+                                        {pro.certifications.map((c, i) => <span key={i} className="av-tag">{c}</span>)}
+                                    </div>
+                                </>
                             )}
                         </div>
-                    )}
+                    </div>
 
                     {/* ── Documents ── */}
                     <div className="lv-card">
                         <div className="lv-card-head"><FileText size={14} /> Documents</div>
-                        {docLinks.length > 0 ? (
-                            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                        {docLinks.length ? (
+                            <div className="av-doc-list">
                                 {docLinks.map(({ label, url }) => (
-                                    <a
-                                        key={label}
-                                        href={url}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                        className="av-doc-link"
-                                    >
+                                    <a key={label} href={url} target="_blank" rel="noreferrer" className="av-doc-link">
                                         <FileText size={14} /> {label} <ExternalLink size={12} />
                                     </a>
                                 ))}
@@ -343,207 +511,36 @@ function JobApplicantView({ id, closeModal }) {
                     </div>
 
                     {/* ── Referees ── */}
-                    {ap.referees?.length > 0 && (
-                        <div className="lv-card">
-                            <div className="lv-card-head"><Users size={14} /> Referees</div>
-                            <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                                {ap.referees.map((ref, idx) => (
-                                    <div key={idx} className="av-referee-card">
-                                        {/* Referee header row */}
-                                        <div className="av-referee-header">
-                                            <div className="av-referee-name">{ref.name}</div>
-                                            <RefereeStatusBadge submitted={ref.hasSubmitted} />
-                                        </div>
-
-                                        <div className="lv-rows">
-                                            <LvRow label="Email" value={ref.email} />
-                                            {ref.title && <LvRow label="Title" value={ref.title} />}
-                                            {ref.institution && <LvRow label="Institution" value={ref.institution} />}
-                                            {ref.phone && <LvRow label="Phone" value={ref.phone} />}
-                                            {ref.submittedAt && (
-                                                <LvRow label="Submitted On" value={formatDate(ref.submittedAt)} />
-                                            )}
-                                        </div>
-
-                                        {/* Reference text or download */}
-                                        {ref.hasSubmitted && ref.referenceText && (
-                                            <div className="av-ref-text-box">
-                                                <div className="av-ref-text-label">Reference Statement</div>
-                                                <button
-                                                    className="av-ref-download-btn"
-                                                    onClick={() => downloadRefAsPdf(ref, ap.fullName)}
-                                                    title="Download as PDF"
-                                                >
-                                                    <Download size={13} /> Download as PDF
-                                                </button>
-                                            </div>
-                                        )}
-
-                                        {/* PDF file if referee uploaded one */}
-                                        {ref.hasSubmitted && (ref.referenceFile || ref.referenceDocument) && (
-                                            <a
-                                                href={resolveDocUrl(ref.referenceFile ?? ref.referenceDocument)}
-                                                target="_blank"
-                                                rel="noreferrer"
-                                                className="av-doc-link"
-                                                style={{ marginTop: 10 }}
-                                            >
-                                                <Download size={14} /> Download Reference File <ExternalLink size={12} />
-                                            </a>
-                                        )}
-
-                                        {!ref.hasSubmitted && (
-                                            <p className="av-ref-pending">
-                                                <Clock size={12} /> Awaiting referee response…
-                                            </p>
-                                        )}
-                                    </div>
-                                ))}
-                            </div>
+                    <div className="lv-card">
+                        <div className="lv-card-head" style={{ justifyContent: "space-between" }}>
+                            <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                                <Users size={14} /> Referees
+                            </span>
+                            <span>{submittedRefs}/{REFEREE_COUNT} submitted</span>
                         </div>
-                    )}
+                        {referees.length ? (
+                            <div className="av-referee-list">
+                                {referees.map((r, i) => <RefereeCard key={r.email ?? i} referee={r} ap={ap} />)}
+                            </div>
+                        ) : (
+                            <p className="lv-no-subjects">No referees on record.</p>
+                        )}
+                    </div>
 
-                </div>
-            )}
-
-            {/* No data */}
-            {!isLoading && !isError && !ap && (
-                <div className="lv-loader">
-                    <span style={{ fontSize: 28 }}>🔍</span>
-                    <p>Applicant not found.</p>
+                    {/* ── Admin notes ── */}
+                    <div className="lv-card">
+                        <div className="lv-card-head"><StickyNote size={14} /> Admin notes</div>
+                        {ap.adminNotes ? (
+                            <p className="av-notes">{ap.adminNotes}</p>
+                        ) : (
+                            <p className="lv-no-subjects">
+                                No notes yet.{writer ? " Notes added when updating the status appear here." : ""}
+                            </p>
+                        )}
+                    </div>
                 </div>
             )}
         </CustomModal>
-    );
-}
-
-/* ── Helper: capitalize first letter ── */
-function capitalize(str) {
-    if (!str) return str;
-    return str.charAt(0).toUpperCase() + str.slice(1);
-}
-
-/* ── Single-record CSV export ── */
-function exportApplicantToCsv(ap) {
-    const pi = ap.personalInfo ?? {};
-    const ai = ap.aiScore ?? {};
-    const exp = ap.experience ?? {};
-    const pro = ap.professionalInfo ?? {};
-    const job = ap.job?.position ?? ap.jobId?.position ?? {};
-
-    const degrees = (ap.qualifications?.degrees ?? [])
-        .map((d) => [
-            capitalize(d.degreeType),
-            d.institution,
-            d.programme ? d.programme.replace(/_/g, " ") : "",
-            d.yearAwarded ?? d.year ?? "",
-        ].filter(Boolean).join(" | "))
-        .join("; ");
-
-    const referees = (ap.referees ?? [])
-        .map((r) => `${r.name} <${r.email}> [${r.hasSubmitted ? "Submitted" : "Pending"}]`)
-        .join("; ");
-
-    const headers = [
-        // Identity
-        "Application ID", "Full Name", "First Name", "Middle Name", "Last Name",
-        "Email", "Phone", "Gender", "Date of Birth", "Marital Status", "NIN",
-        // Job
-        "Position", "Cadre", "Job Type", "Deadline", "Published",
-        // Status
-        "Application Status", "AI Shortlist Status",
-        // AI Scores
-        "Overall Score", "Qualification Score", "Experience Score",
-        "Publication Score", "Professional Score",
-        "AI Recommendation", "Missing Requirements",
-        // Experience
-        "Teaching Years", "Research Years", "Industry Years",
-        "Publications", "Post-Qual. Experience (yrs)",
-        // Qualifications
-        "Has PhD", "NYSC Completed", "Degrees",
-        // Professional
-        "ICT Proficient", "COREN Registered", "Computer Skills", "Certifications",
-        // Referees & dates
-        "Referees", "Applied At", "Last Updated",
-    ];
-
-    const row = [
-        ap.applicationId ?? "",
-        ap.fullName ?? "",
-        pi.firstName ?? "",
-        pi.middleName ?? "",
-        pi.lastName ?? "",
-        pi.email ?? "",
-        pi.phone ?? "",
-        capitalize(pi.gender) ?? "",
-        pi.dateOfBirth ? formatDate(pi.dateOfBirth) : "",
-        capitalize(pi.maritalStatus) ?? "",
-        pi.nin ?? "",
-        job.title ?? "",
-        job.cadre ?? "",
-        ap.job?.description ?? ap.jobId?.description ?? "",
-        (ap.job?.applicationDeadline ?? ap.jobId?.applicationDeadline) ? formatDate(ap.job?.applicationDeadline ?? ap.jobId?.applicationDeadline) : "",
-        (ap.job?.publishedDate ?? ap.jobId?.publishedDate) ? formatDate(ap.job?.publishedDate ?? ap.jobId?.publishedDate) : "",
-        ap.status ?? "",
-        ai.shortlistStatus ?? "Pending",
-        ai.overallScore ?? "",
-        ai.qualificationScore ?? "",
-        ai.experienceScore ?? "",
-        ai.publicationScore ?? "",
-        ai.professionalScore ?? "",
-        ai.recommendation ?? ai.aiRecommendation ?? "",
-        (ai.missingRequirements ?? []).join(" | "),
-        exp.teachingYears ?? 0,
-        exp.researchYears ?? 0,
-        exp.industryYears ?? 0,
-        exp.publications ?? 0,
-        exp.postQualificationExperience ?? 0,
-        ap.qualifications?.hasPhd ? "Yes" : "No",
-        ap.qualifications?.nysc?.completed ? "Yes" : "No",
-        degrees,
-        pro.ictProficiency ? "Yes" : "No",
-        pro.hasCOREN ? "Yes" : "No",
-        (pro.computerSkills ?? []).join("; "),
-        (pro.certifications ?? []).join("; "),
-        referees,
-        ap.appliedAt ? formatDate(ap.appliedAt) : "",
-        ap.updatedAt ? formatDate(ap.updatedAt) : "",
-    ];
-
-    const escape = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
-    const csv = [
-        headers.map(escape).join(","),
-        row.map(escape).join(","),
-    ].join("\n");
-
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `applicant_${(ap.applicationId ?? "record").replace(/[^a-z0-9]/gi, "_")}.csv`;
-    link.click();
-    URL.revokeObjectURL(url);
-}
-
-/* ── Referee submission badge ── */
-function RefereeStatusBadge({ submitted }) {
-    return submitted ? (
-        <span className="av-ref-badge submitted">
-            <CheckCircle2 size={11} /> Submitted
-        </span>
-    ) : (
-        <span className="av-ref-badge pending">
-            <XCircle size={11} /> Pending
-        </span>
-    );
-}
-
-function LvRow({ label, value }) {
-    return (
-        <div className="lv-row">
-            <span className="lv-row-label">{label}</span>
-            <span className="lv-row-value">{value ?? "—"}</span>
-        </div>
     );
 }
 

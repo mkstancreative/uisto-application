@@ -30,29 +30,24 @@
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #ffb830, #d4600a);
+  background: var(--accent-gradient);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: var(--accent-contrast);
   flex-shrink: 0;
-  box-shadow: 0 4px 14px rgba(212, 96, 10, 0.3);
-}
-
-.page-icon.orange {
-  background: linear-gradient(135deg, #fb923c, #dc2626);
-  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.25);
+  box-shadow: 0 4px 14px rgba(var(--accent-rgb), 0.3);
 }
 
 .page-title {
   font-size: 18px;
   font-weight: 700;
-  color: #0a1120;
+  color: #071c20;
   line-height: 1.2;
 }
 
 html:not(.light-mode) .page-title {
-  color: #e4e7f0;
+  color: #e3eceb;
 }
 
 .page-sub {
@@ -84,9 +79,9 @@ html:not(.light-mode) .page-title {
   gap: 6px;
   padding: 6px 14px;
   border-radius: 8px;
-  border: 1px solid rgba(255, 184, 48, 0.3);
-  background: rgba(255, 184, 48, 0.07);
-  color: #d4600a;
+  border: 1px solid rgba(var(--accent-rgb), 0.3);
+  background: rgba(var(--accent-rgb), 0.07);
+  color: var(--accent-ink);
   font-size: 12.5px;
   font-weight: 600;
   cursor: pointer;
@@ -95,8 +90,8 @@ html:not(.light-mode) .page-title {
 }
 
 .assign-email-btn:hover {
-  background: linear-gradient(135deg, #ffb830, #d4600a);
-  color: #fff;
+  background: var(--accent-gradient);
+  color: var(--accent-contrast);
   border-color: transparent;
-  box-shadow: 0 3px 10px rgba(212, 96, 10, 0.25);
+  box-shadow: 0 3px 10px rgba(var(--accent-rgb), 0.25);
 }
