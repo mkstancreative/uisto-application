@@ -52,18 +52,18 @@
    TABLE
 ───────────────────────────────────────── */
 
+/* Wide tables scroll sideways inside their card. Row action menus are
+   portalled to <body>, so the scroll container can't clip them. */
 .general-table {
   width: 100%;
-  /* overflow-x: auto; */
-  border-radius: 14px;
-  /* overflow-y must stay visible so dropdown menus aren't clipped */
-  overflow-y: visible;
+  overflow-x: auto;
+  border-radius: 14px 14px 0 0;
+  -webkit-overflow-scrolling: touch;
 }
 
 .general-table table {
   width: 100%;
   border-collapse: collapse;
-  /* min-width: 650px; */
 }
 
 /* ─────────────────────────────────────────
@@ -309,26 +309,26 @@ html:not(.light-mode) .datatable-toolbar {
 }
 
 html:not(.light-mode) .datatable-search {
-  background: #121f38;
+  background: #0f3a41;
   border-color: rgba(255, 255, 255, 0.08);
-  color: #c9d1e0;
+  color: #d6e3e2;
 }
 
 html:not(.light-mode) .datatable-search::placeholder {
-  color: #4a5568;
+  color: #6f8a8d;
 }
 
 html:not(.light-mode) .general-table thead {
-  background: #0b1628;
+  background: #082327;
   border-bottom-color: rgba(255, 255, 255, 0.06);
 }
 
 html:not(.light-mode) .general-table th {
-  color: #7a8aaa;
+  color: #8fabae;
 }
 
 html:not(.light-mode) .general-table td {
-  color: #c9d1e0;
+  color: #d6e3e2;
   border-top-color: rgba(255, 255, 255, 0.05);
 }
 
@@ -337,27 +337,27 @@ html:not(.light-mode) .general-table tbody tr:hover {
 }
 
 html:not(.light-mode) .table-state {
-  color: #4a5568;
+  color: #6f8a8d;
 }
 
 html:not(.light-mode) .skeleton {
-  background: linear-gradient(90deg, #1a2844 25%, #1f3054 37%, #1a2844 63%);
+  background: linear-gradient(90deg, #0f3a41 25%, #14474f 37%, #0f3a41 63%);
   background-size: 400% 100%;
 }
 
 html:not(.light-mode) .table-footer {
-  background: #0b1628;
+  background: #082327;
   border-top-color: rgba(255, 255, 255, 0.06);
 }
 
 html:not(.light-mode) .table-count {
-  color: #5a6a8a;
+  color: #7b9699;
 }
 
 html:not(.light-mode) .page-btn {
-  background: #131f38;
+  background: #0f3a41;
   border-color: rgba(255, 255, 255, 0.08);
-  color: #a0aec0;
+  color: #9db5b8;
 }
 
 html:not(.light-mode) .page-btn:hover:not(:disabled) {
@@ -373,13 +373,13 @@ html:not(.light-mode) .page-btn.active {
 }
 
 html:not(.light-mode) .page-gap {
-  color: #3a4a6a;
+  color: #4d6669;
 }
 
 html:not(.light-mode) .page-size-select {
-  background: #131f38;
+  background: #0f3a41;
   border-color: rgba(255, 255, 255, 0.08);
-  color: #a0aec0;
+  color: #9db5b8;
 }
 
 html:not(.light-mode) .table-action {

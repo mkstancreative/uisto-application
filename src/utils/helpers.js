@@ -34,6 +34,22 @@ export const formatOnlyDate = (isoString) => {
   });
 };
 
+/**
+ * Vacancy deadlines are stored as 23:59:59 UTC on the closing day, so show the
+ * UTC calendar date — local time would roll WAT users over to the next day.
+ */
+export const formatDeadline = (isoString) => {
+  if (!isoString) return 'N/A';
+  const date = new Date(isoString);
+  if (Number.isNaN(date.getTime())) return 'N/A';
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    timeZone: 'UTC',
+  });
+};
+
 export function formatNum(n) {
   if (n == null || isNaN(n)) return '0';
   if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';

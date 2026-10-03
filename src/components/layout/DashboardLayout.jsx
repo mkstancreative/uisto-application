@@ -6,6 +6,9 @@ import Sidebar from './Sidebar';
 import Topbar from './Topbar';
 
 
+// New key so everyone starts in light mode; the old key defaulted to dark
+const THEME_KEY = 'uisto.theme';
+
 function DashboardLayout({
   navItems = [],
   logoIcon = '/logo.png',
@@ -25,12 +28,12 @@ function DashboardLayout({
     }
   });
 
-  /* ── Dark mode (persisted, default = dark) ── */
+  /* ── Theme (persisted, default = light) ── */
   const [darkMode, setDarkMode] = useState(() => {
     try {
-      return JSON.parse(localStorage.getItem('ems_dark_mode')) ?? true;
+      return localStorage.getItem(THEME_KEY) === 'dark';
     } catch {
-      return true;
+      return false;
     }
   });
 
@@ -53,7 +56,11 @@ function DashboardLayout({
       root.classList.add('light-mode');
       root.classList.remove('dark');
     }
-    localStorage.setItem('ems_dark_mode', JSON.stringify(darkMode));
+    try {
+      localStorage.setItem(THEME_KEY, darkMode ? 'dark' : 'light');
+    } catch {
+      /* storage unavailable — theme just won't persist */
+    }
   }, [darkMode]);
 
   /* Close mobile sidebar on resize to desktop */
@@ -99,7 +106,7 @@ function DashboardLayout({
 
         {/* ── Page content (injected by the router via <Outlet />) ── */}
         <main className="dashboard-content w-full flex flex-col items-center">
-          <div className="w-full max-w-6xl mx-auto">
+          <div className="w-full min-w-0 max-w-6xl mx-auto">
             <Outlet />
           </div>
         </main>

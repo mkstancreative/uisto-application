@@ -42,7 +42,7 @@
 /* Focus */
 .filter-select:focus {
   border-color: var(--accent-ink);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.15);
   outline: none;
 }
 
@@ -82,4 +82,30 @@
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
   border-top: 6px solid #9ca3af;
+}
+
+/* ── Dark mode ── */
+html:not(.light-mode) .filter-label {
+  color: #9db5b8;
+}
+
+html:not(.light-mode) .filter-select {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #e3eceb;
+  color-scheme: dark;
+}
+
+html:not(.light-mode) .filter-select option {
+  background: #0b2a30;
+  color: #e3eceb;
+}
+
+html:not(.light-mode) .filter-select::placeholder,
+html:not(.light-mode) .placeholder-active {
+  color: #7b9699;
+}
+
+html:not(.light-mode) .chevron {
+  border-top-color: #7b9699;
 }

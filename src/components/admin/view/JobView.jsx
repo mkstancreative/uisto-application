@@ -16,7 +16,7 @@ import StatusBadge from "../../ui/StatusBadge/StatusBadge";
 import { useJob } from "../../../hooks/useJobs";
 import { useAllSubcadres } from "../../../hooks/useConfig";
 import { errorMessage } from "../../../api/api";
-import { formatDate, formatOnlyDate } from "../../../utils/helpers";
+import { formatDate, formatDeadline } from "../../../utils/helpers";
 import { daysUntil, deadlineLabel } from "../common/dates";
 import { makeSubcadreName } from "../common/refs";
 import "./LecturerView.css";
@@ -150,7 +150,7 @@ function JobView({ id, closeModal }) {
                 value={
                   job.applicationDeadline ? (
                     <span className="cell-stack" style={{ justifyContent: "flex-end" }}>
-                      {formatOnlyDate(job.applicationDeadline)}
+                      {formatDeadline(job.applicationDeadline)}
                       <span className={`tag ${days < 0 ? "tag-red" : days <= 3 ? "tag-amber" : "tag-slate"}`}>
                         {deadlineLabel(job.applicationDeadline)}
                       </span>

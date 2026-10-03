@@ -11,7 +11,7 @@ import JobApplicantStatusMutate from "../Mutate/JobApplicantStatusMutate";
 import { useApplication } from "../../../hooks/useApplications";
 import { useAuth } from "../../../hooks/useAuth";
 import { canWrite, getInitials } from "../../../utils/roles";
-import { formatDate, formatOnlyDate } from "../../../utils/helpers";
+import { formatDate, formatDeadline, formatOnlyDate } from "../../../utils/helpers";
 import { downloadCsv, fileSafe } from "../../../utils/csv";
 import { fileUrl } from "../../../api/session";
 import { errorMessage } from "../../../api/api";
@@ -330,7 +330,7 @@ function JobApplicantView({ id, closeModal }) {
                                         : null
                                 }
                             />
-                            <LvRow label="Deadline" value={job.applicationDeadline ? formatDate(job.applicationDeadline) : null} />
+                            <LvRow label="Deadline" value={job.applicationDeadline ? formatDeadline(job.applicationDeadline) : null} />
                             {job.isActive !== undefined && (
                                 <LvRow label="Vacancy" value={<StatusBadge status={job.isActive ? "Active" : "Inactive"} />} />
                             )}

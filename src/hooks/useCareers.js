@@ -11,6 +11,8 @@ import {
   verifyNin,
 } from '../api/services/careers';
 
+const noRetryOnClientError = (count, err) => !(err?.status >= 400 && err?.status < 500) && count < 2;
+
 /* ── Public vacancies ── */
 export const useVacancies = (params) =>
   useQuery({
@@ -25,7 +27,7 @@ export const useVacancy = (jobId) =>
     enabled: Boolean(jobId),
     queryKey: ['careers', 'detail', jobId],
     queryFn: () => getVacancy(jobId),
-    retry: (count, err) => err?.status !== 404 && count < 2,
+    retry: noRetryOnClientError,
   });
 
 /* ── Applying ── */
@@ -37,11 +39,17 @@ export const useSubmitApplication = () =>
       submitApplication(payload, { onUploadProgress }),
   });
 
-export const useApplicationStatus = () => useMutation({ mutationFn: getApplicationStatus });
+/** Looks up one application; pass null to stay idle until the form is submitted. */
+export const useApplicationStatus = (lookup) =>
+  useQuery({
+    enabled: Boolean(lookup?.applicationId && lookup?.email),
+    queryKey: ['application-status', lookup?.applicationId, lookup?.email],
+    queryFn: () => getApplicationStatus(lookup),
+    retry: noRetryOnClientError,
+    staleTime: 0,
+  });
 
 /* ── Magic links ── */
-const noRetryOnClientError = (count, err) => !(err?.status >= 400 && err?.status < 500) && count < 2;
-
 export const useRefereeForm = (token) =>
   useQuery({
     enabled: Boolean(token),

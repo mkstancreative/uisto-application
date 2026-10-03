@@ -1,7 +1,9 @@
 import { Search } from "lucide-react";
 import "./searchInput.css";
 
-function SearchInput({ value, onChange, onClear, placeholder }) {
+function SearchInput({ value, onChange, onClear, placeholder, autoFocus = false }) {
+  const clear = () => (onClear ? onClear() : onChange(""));
+
   return (
     <div className="search-box">
       <Search size={15} className="search-icon" />
@@ -11,11 +13,11 @@ function SearchInput({ value, onChange, onClear, placeholder }) {
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="search-input"
-        autoFocus
+        autoFocus={autoFocus}
       />
 
       {value && (
-        <button className="search-clear" onClick={onClear}>
+        <button type="button" className="search-clear" onClick={clear} aria-label="Clear search">
           ×
         </button>
       )}

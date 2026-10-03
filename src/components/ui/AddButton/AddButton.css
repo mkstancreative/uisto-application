@@ -17,8 +17,9 @@
 }
 
 /* Hover */
-.add-btn:hover {
-  background: #0b2a30;
+.add-btn:hover:not(:disabled) {
+  background: var(--brand-lime-light);
+  box-shadow: 0 6px 16px rgba(var(--brand-lime-rgb), 0.35);
   transform: translateY(-1px);
 }
 
@@ -30,4 +31,9 @@
 /* Icon */
 .add-btn svg {
   stroke-width: 2.5;
+}
+.add-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
 }

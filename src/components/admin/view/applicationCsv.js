@@ -1,4 +1,4 @@
-import { formatDate, formatOnlyDate } from '../../../utils/helpers';
+import { formatDate, formatDeadline, formatOnlyDate } from '../../../utils/helpers';
 
 /* CSV rows for applications, built only from fields the API documents. */
 
@@ -88,7 +88,7 @@ export const flattenApplicationDetail = (ap = {}) => {
     Vacancy: pos.title ?? '',
     Cadre: pos.cadre ?? '',
     Department: pos.department ?? ap.department ?? '',
-    'Vacancy Deadline': date(job.applicationDeadline),
+    'Vacancy Deadline': job.applicationDeadline ? formatDeadline(job.applicationDeadline) : '',
     ...Object.fromEntries(
       Object.entries(base).filter(
         ([k]) => !['Application ID', 'Full Name', 'Email', 'Phone', 'State of Origin', 'LGA'].includes(k),

@@ -116,7 +116,7 @@ function StaffCreate({ closeModal }) {
       isOpen
       title="Add Staff User"
       subtitle="Create a sign-in for a member of staff."
-      size="wide"
+      size="medium"
       onClose={closeModal}
       footer={
         <>

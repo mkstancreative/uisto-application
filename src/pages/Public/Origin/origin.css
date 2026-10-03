@@ -1,0 +1,183 @@
+/* ══════════════════════════════════════════
+   PUBLIC — State of Origin / LGA magic link  (prefix: og-)
+══════════════════════════════════════════ */
+
+.og-page {
+  background: var(--brand-mist);
+}
+
+.og-container {
+  max-width: 720px;
+  padding-top: 0;
+}
+
+.og-container > .pub-state,
+.og-card {
+  position: relative;
+  z-index: 2;
+  margin-top: -34px;
+}
+
+.og-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 80px 20px 30px;
+  font-size: 14px;
+  color: #5d7174;
+}
+
+.og-loading svg {
+  color: var(--brand-teal-2);
+}
+
+.og-card {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.og-intro {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.og-intro-icon {
+  width: 42px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 13px;
+  background: var(--brand-teal);
+  color: var(--brand-lime);
+}
+
+.og-intro h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--brand-ink);
+}
+
+.og-intro p {
+  margin-top: 4px;
+  font-size: 14px;
+  line-height: 1.65;
+  color: #4b5f62;
+}
+
+.og-intro strong {
+  color: var(--brand-ink);
+  font-weight: 600;
+}
+
+.og-appid {
+  font-size: 13px;
+  color: #5d7174 !important;
+}
+
+.og-mono {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--brand-teal);
+}
+
+.og-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.og-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.og-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.og-recorded {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+  width: 100%;
+}
+
+.og-recorded > div {
+  min-width: 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--brand-mist);
+  text-align: left;
+}
+
+.og-recorded dt {
+  font-size: 11.5px;
+  color: #6b7f82;
+}
+
+.og-recorded dd {
+  margin: 3px 0 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--brand-ink);
+  overflow-wrap: anywhere;
+}
+
+.og-done {
+  align-items: center;
+  text-align: center;
+}
+
+.og-done h2 {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--brand-ink);
+}
+
+.og-done > p {
+  font-size: 14px;
+  color: #4b5f62;
+}
+
+.og-done-icon {
+  width: 60px;
+  height: 60px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #eaf6ef;
+  color: #1d8a4a;
+}
+
+@media (max-width: 640px) {
+  .og-container > .pub-state,
+  .og-card {
+    margin-top: -26px;
+  }
+
+  .og-grid,
+  .og-recorded {
+    grid-template-columns: 1fr;
+  }
+
+  .og-actions {
+    flex-direction: column-reverse;
+  }
+
+  .og-actions .lp-btn,
+  .og-actions .pub-btn-ghost {
+    width: 100%;
+  }
+}

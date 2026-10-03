@@ -1,5 +1,6 @@
 import { Briefcase } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import JobMutate from '../../../components/admin/Mutate/JobMutate';
 import JobTable from '../../../components/admin/Tables/JobTable';
@@ -28,6 +29,16 @@ function ManageJobs() {
   const { user } = useAuth();
   const editable = canWrite(user);
   const { openModal, closeModal } = useModal();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  /* Dashboard "New vacancy" link arrives with state { create: true }: open the form once, then clear it */
+  const wantsCreate = Boolean(location.state?.create);
+  useEffect(() => {
+    if (!wantsCreate) return;
+    if (editable) openModal(<JobMutate closeModal={closeModal} />);
+    navigate(location.pathname + location.search, { replace: true, state: null });
+  }, [wantsCreate, editable, openModal, closeModal, navigate, location.pathname, location.search]);
 
   const [params, setParams] = useState(INITIAL_PARAMS);
   const [pendingToggle, setPendingToggle] = useState(null);

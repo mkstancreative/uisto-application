@@ -7,10 +7,17 @@ export const toDateInput = (date) => {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 };
 
-/** End of the chosen local day, as an ISO string for the API. */
+/** "YYYY-MM-DD" of a stored deadline (deadlines are kept as a UTC calendar day). */
+export const deadlineToInput = (iso) => {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '';
+  return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`;
+};
+
+/** Closing day → 23:59:59 UTC, the convention the API uses for deadlines. */
 export const endOfDayIso = (dateInput) => {
   if (!dateInput) return undefined;
-  const d = new Date(`${dateInput}T23:59:59.999`);
+  const d = new Date(`${dateInput}T23:59:59.000Z`);
   return Number.isNaN(d.getTime()) ? undefined : d.toISOString();
 };
 

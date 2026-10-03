@@ -3,7 +3,7 @@ import GeneralTable from "../../ui/GeneralTable/GeneralTable";
 import ActionDropdown from "../../ui/ActionDropdown/ActionDropdown";
 import StatusBadge from "../../ui/StatusBadge/StatusBadge";
 import Toggler from "../../ui/Toggler/Toggler";
-import { formatOnlyDate } from "../../../utils/helpers";
+import { formatDeadline, formatOnlyDate } from "../../../utils/helpers";
 import { daysUntil, deadlineLabel } from "../common/dates";
 import "../common/adminCommon.css";
 
@@ -62,7 +62,7 @@ function JobTable({
         const tone = days < 0 ? "tag-red" : days <= 3 ? "tag-amber" : "tag-slate";
         return (
           <div className="cell-nowrap">
-            <span>{formatOnlyDate(row.applicationDeadline)}</span>
+            <span>{formatDeadline(row.applicationDeadline)}</span>
             <span className="cell-sub">
               <span className={`tag ${tone}`}>{deadlineLabel(row.applicationDeadline)}</span>
             </span>

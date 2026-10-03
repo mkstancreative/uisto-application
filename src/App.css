@@ -6,6 +6,8 @@
 
 /* Light mode: teal reads better than lime on white backgrounds */
 html.light-mode {
+  --card-bg: #ffffff;
+  --input-bg: #ffffff;
   --accent-ink: var(--brand-teal-2);
   --accent-rgb: 17, 96, 107;
   --text-muted: #4a5568;
@@ -50,8 +52,8 @@ html.light-mode {
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  /* --accent is the brand fill defined above; don't redefine it here */
+  --accent-foreground: var(--accent-contrast);
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
@@ -136,8 +138,7 @@ html.light-mode {
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
   --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
+  --accent-foreground: var(--accent-contrast);
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);

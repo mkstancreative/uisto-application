@@ -516,3 +516,82 @@ html:not(.light-mode) .acct-danger-row p {
   font-weight: 600;
   overflow-wrap: anywhere;
 }
+
+/* ── My Account tabs ── */
+.acct-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  width: fit-content;
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.acct-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+html:not(.light-mode) .acct-tabs {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.07);
+}
+
+.acct-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: #4a5568;
+  font-size: 13.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+}
+
+html:not(.light-mode) .acct-tab {
+  color: #9db5b8;
+}
+
+.acct-tab:hover:not(.active) {
+  color: var(--accent-ink);
+  background: rgba(var(--accent-rgb), 0.08);
+}
+
+.acct-tabs .acct-tab.active {
+  background: var(--accent);
+  color: var(--accent-contrast);
+  box-shadow: 0 2px 8px rgba(var(--accent-rgb), 0.3);
+}
+
+.acct-tab:focus-visible {
+  outline: 2px solid var(--accent-ink);
+  outline-offset: 2px;
+}
+
+.acct-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 760px;
+  animation: fadeIn 0.25s ease both;
+}
+
+@media (max-width: 480px) {
+  .acct-tabs {
+    width: 100%;
+  }
+
+  .acct-tab {
+    flex: 1 0 auto;
+    justify-content: center;
+    padding: 9px 12px;
+  }
+}

@@ -60,12 +60,13 @@ html:not(.light-mode) .page-title {
 .filter-selects-block {
   display: flex;
   align-items: center;
-  gap: 5px;
+  flex-wrap: wrap;
+  gap: 8px;
   justify-content: space-between;
 }
 
 .filter-selects-block>*:not(:last-child) {
-  flex: 1;
+  flex: 1 1 180px;
 }
 
 .filter-selects-block>div:last-of-type {
@@ -94,4 +95,72 @@ html:not(.light-mode) .page-title {
   color: var(--accent-contrast);
   border-color: transparent;
   box-shadow: 0 3px 10px rgba(var(--accent-rgb), 0.25);
+}
+/* ══════════════════════════════════════════
+   SURFACE CARDS
+   Page header, search bar and filter row sit on white cards that match
+   the table card (GeneralTable). Only direct children of the page are
+   styled, so filter rows already inside a panel stay flat.
+══════════════════════════════════════════ */
+.page-container > .page-header,
+.page-container > .filter-wrapper,
+.page-container > .filter-selects-block,
+.page-container > .rc-filters {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  border-radius: 14px;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+}
+
+.page-container > .page-header {
+  padding: 18px 22px;
+}
+
+.page-container > .filter-wrapper,
+.page-container > .filter-selects-block,
+.page-container > .rc-filters {
+  padding: 14px 16px;
+}
+
+.page-container > .filter-wrapper .search-box {
+  margin-bottom: 0;
+}
+
+/* Search directly followed by filters reads as one panel */
+.page-container > .filter-wrapper:has(+ .filter-selects-block, + .rc-filters) {
+  border-bottom: none;
+  border-radius: 14px 14px 0 0;
+  padding-bottom: 6px;
+  clip-path: inset(-24px -24px 0 -24px);
+}
+
+.page-container > .filter-wrapper + .filter-selects-block,
+.page-container > .filter-wrapper + .rc-filters {
+  margin-top: -20px;
+  border-top: none;
+  border-radius: 0 0 14px 14px;
+  padding-top: 10px;
+  clip-path: inset(0 -24px -24px -24px);
+}
+
+html:not(.light-mode) .page-container > .page-header,
+html:not(.light-mode) .page-container > .filter-wrapper,
+html:not(.light-mode) .page-container > .filter-selects-block,
+html:not(.light-mode) .page-container > .rc-filters {
+  background: #0b2a30;
+  border-color: rgba(255, 255, 255, 0.07);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.35);
+}
+
+@media (max-width: 480px) {
+  .page-container > .page-header {
+    padding: 16px;
+  }
+
+  .page-container > .filter-wrapper,
+  .page-container > .filter-selects-block,
+  .page-container > .rc-filters {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
 }

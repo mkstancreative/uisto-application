@@ -138,12 +138,12 @@ function VacancyDetail() {
                 </span>
                 <h3>{job.title}</h3>
                 <dl className="cr-facts">
-                  {facts.map(({ icon: Icon, label, value }) => (
-                    <div key={label}>
+                  {facts.map((f) => (
+                    <div key={f.label}>
                       <dt>
-                        <Icon size={15} /> {label}
+                        <f.icon size={15} /> {f.label}
                       </dt>
-                      <dd>{value}</dd>
+                      <dd>{f.value}</dd>
                     </div>
                   ))}
                 </dl>

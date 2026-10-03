@@ -21,6 +21,7 @@ import './careers.css';
 const LIMIT = 9;
 const DEBOUNCE_MS = 350;
 const CADRES = ['Academic', 'Non-Academic'];
+const DEFAULT_CADRE = 'Academic';
 const FILTER_KEYS = ['search', 'cadre', 'department', 'subcadre', 'page'];
 
 /** Page numbers with gaps: 1 … 4 5 [6] 7 8 … 20 */
@@ -88,7 +89,9 @@ function Pagination({ page, pages, total, onChange, disabled }) {
 function Vacancies() {
   const [params, setParams] = useSearchParams();
   const search = params.get('search') ?? '';
-  const cadre = params.get('cadre') ?? '';
+  /* One cadre is always selected; Academic unless the URL says otherwise */
+  const cadre = CADRES.includes(params.get('cadre')) ? params.get('cadre') : DEFAULT_CADRE;
+  const isAcademic = cadre === 'Academic';
   const department = params.get('department') ?? '';
   const subcadre = params.get('subcadre') ?? '';
   const page = Math.max(1, parseInt(params.get('page') ?? '1', 10) || 1);
@@ -175,8 +178,8 @@ function Vacancies() {
     };
   }, [allOpen.data, list, subcadre]);
 
-  const hasFilters = Boolean(search || cadre || department || subcadre);
-  const showSubcadre = cadre !== 'Academic' && subcadreOptions.length > 0;
+  const hasFilters = Boolean(search || cadre !== DEFAULT_CADRE || department || subcadre);
+  const showSubcadre = !isAcademic && subcadreOptions.length > 0;
 
   let body;
   if (query.isLoading) {
@@ -271,11 +274,17 @@ function Vacancies() {
               <div className="lp-input-wrap plain">
                 <select
                   value={cadre}
-                  onChange={(e) =>
-                    update({ cadre: e.target.value, ...(e.target.value === 'Academic' ? { subcadre: '' } : {}) })
-                  }
+                  onChange={(e) => {
+                    // Departments belong to Academic roles, sub-cadres to Non-Academic ones
+                    clearTimeout(timers.current.department);
+                    setDeptText('');
+                    update({
+                      cadre: e.target.value === DEFAULT_CADRE ? '' : e.target.value,
+                      department: '',
+                      subcadre: '',
+                    });
+                  }}
                 >
-                  <option value="">All cadres</option>
                   {CADRES.map((c) => (
                     <option key={c} value={c}>
                       {c}
@@ -285,27 +294,29 @@ function Vacancies() {
               </div>
             </label>
 
-            <label className="cr-filter">
-              <span className="pub-sr-only">Department</span>
-              <div className="lp-input-wrap">
-                <Building2 size={16} className="lp-input-icon" />
-                <input
-                  type="text"
-                  placeholder="Department"
-                  list="cr-departments"
-                  value={deptText}
-                  onChange={(e) => {
-                    setDeptText(e.target.value);
-                    debounced('department', e.target.value);
-                  }}
-                />
-                <datalist id="cr-departments">
-                  {departmentOptions.map((d) => (
-                    <option key={d} value={d} />
-                  ))}
-                </datalist>
-              </div>
-            </label>
+            {isAcademic && (
+              <label className="cr-filter">
+                <span className="pub-sr-only">Department</span>
+                <div className="lp-input-wrap">
+                  <Building2 size={16} className="lp-input-icon" />
+                  <input
+                    type="text"
+                    placeholder="Department"
+                    list="cr-departments"
+                    value={deptText}
+                    onChange={(e) => {
+                      setDeptText(e.target.value);
+                      debounced('department', e.target.value);
+                    }}
+                  />
+                  <datalist id="cr-departments">
+                    {departmentOptions.map((d) => (
+                      <option key={d} value={d} />
+                    ))}
+                  </datalist>
+                </div>
+              </label>
+            )}
 
             {showSubcadre && (
               <label className="cr-filter">

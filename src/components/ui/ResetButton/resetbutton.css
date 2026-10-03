@@ -1,41 +1,49 @@
+/* Reset: soft red so it stands apart from the filters it clears */
 .reset-button {
-  padding: 12px 18px;
+  padding: 11px 18px;
   font-size: 14px;
   font-weight: 600;
-  color: #fff;
-  background: linear-gradient(135deg, #e74c3c, #ff6b5a);
-  border: none;
+  color: #c53030;
+  background: rgba(229, 62, 62, 0.08);
+  border: 1px solid rgba(229, 62, 62, 0.35);
   border-radius: 8px;
   cursor: pointer;
-  transition: all 0.25s ease;
-  box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
+  transition: all 0.2s ease;
   outline: none;
+  white-space: nowrap;
 }
 
 /* Hover */
 .reset-button:hover:not(:disabled) {
-  background: linear-gradient(135deg, #c0392b, #ff5a4a);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 14px rgba(192, 57, 43, 0.35);
+  background: rgba(229, 62, 62, 0.14);
+  border-color: #e53e3e;
 }
 
 /* Active click */
 .reset-button:active:not(:disabled) {
-  transform: scale(0.96);
-  box-shadow: 0 3px 8px rgba(192, 57, 43, 0.25);
+  transform: scale(0.97);
 }
 
 /* Focus (keyboard users) */
 .reset-button:focus-visible {
-  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.4);
+  box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.25);
+}
+
+html:not(.light-mode) .reset-button {
+  color: #fc8181;
+  background: rgba(252, 129, 129, 0.1);
+  border-color: rgba(252, 129, 129, 0.35);
+}
+
+html:not(.light-mode) .reset-button:hover:not(:disabled) {
+  background: rgba(252, 129, 129, 0.18);
+  border-color: #fc8181;
 }
 
 /* Disabled */
 .reset-button:disabled {
-  background: #ccc;
+  opacity: 0.5;
   cursor: not-allowed;
-  box-shadow: none;
-  opacity: 0.7;
 }
 
 /* Loading state */
@@ -48,17 +56,17 @@
   content: "";
   width: 16px;
   height: 16px;
-  border: 2px solid #fff;
+  border: 2px solid currentColor;
   border-top-color: transparent;
   border-radius: 50%;
   position: absolute;
   right: 12px;
   top: 50%;
   transform: translateY(-50%);
-  animation: spin 0.6s linear infinite;
+  animation: reset-spin 0.6s linear infinite;
 }
 
-@keyframes spin {
+@keyframes reset-spin {
   to {
     transform: translateY(-50%) rotate(360deg);
   }

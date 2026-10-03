@@ -4,9 +4,9 @@ import { ArrowLeft, CalendarX2, RefreshCw, TriangleAlert } from 'lucide-react';
 import StateCard from '../shared/StateCard';
 import { errorMessage } from '../../../api/api';
 
-/** Shared by the vacancy detail and apply pages: 404 → closed, anything else → retry. */
+/** Shared by the vacancy detail and apply pages: 404 (or a malformed id) → closed, anything else → retry. */
 function VacancyUnavailable({ error, onRetry }) {
-  if (error?.status === 404) {
+  if (error?.status === 404 || error?.status === 400) {
     return (
       <StateCard
         icon={CalendarX2}

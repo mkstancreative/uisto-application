@@ -25,7 +25,7 @@ function JobPositionMutate({ data, closeModal }) {
     department: data?.department || '',
     subcadre: refId(data?.subcadre),
     title: data?.title || '',
-    requiredYearsExperience: data?.requiredYearsExperience ?? 0,
+    requiredYearsExperience: data?.requiredYearsExperience || 1,
     requirements: Array.isArray(data?.requirements) ? data.requirements.map(refId).filter(Boolean) : [],
   }));
   const [formError, setFormError] = useState('');
@@ -86,11 +86,16 @@ function JobPositionMutate({ data, closeModal }) {
       return;
     }
 
+    // The API requires at least 1 year
     const years = Number(form.requiredYearsExperience);
+    if (!Number.isInteger(years) || years < 1) {
+      setFormError('Required years of experience must be a whole number of at least 1.');
+      return;
+    }
     const payload = {
       title: form.title.trim(),
       requirements: form.requirements,
-      requiredYearsExperience: Number.isFinite(years) && years > 0 ? years : 0,
+      requiredYearsExperience: years,
       ...(isAcademic ? { department: form.department.trim() } : {}),
       ...(isNonAcademic ? { subcadre: form.subcadre } : {}),
     };
@@ -125,7 +130,7 @@ function JobPositionMutate({ data, closeModal }) {
           ? 'Changes apply to future vacancies for this position.'
           : 'Positions are the roles a vacancy can be opened for.'
       }
-      size="wide"
+      size="medium"
       onClose={closeModal}
       footer={
         <>
@@ -250,7 +255,7 @@ function JobPositionMutate({ data, closeModal }) {
 
         <div className="form-group col-2">
           <label className="modal-label" htmlFor="pos-years">
-            Required years of experience
+            Required years of experience <span className="req">*</span>
           </label>
           <input
             id="pos-years"
@@ -258,9 +263,9 @@ function JobPositionMutate({ data, closeModal }) {
             className="modal-input"
             value={form.requiredYearsExperience}
             onChange={set('requiredYearsExperience')}
-            min="0"
+            min="1"
             step="1"
-            placeholder="0"
+            placeholder="1"
           />
         </div>
 

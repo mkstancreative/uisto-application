@@ -62,9 +62,14 @@ api.interceptors.response.use(
   async (error) => {
     const original = error.config;
     const status = error.response?.status;
+    // A wrong current password is a 401 too, but it isn't a session problem
+    const isCredentialError = /current password is incorrect/i.test(
+      error.response?.data?.message ?? '',
+    );
 
     if (
       status === 401 &&
+      !isCredentialError &&
       original &&
       !original._retry &&
       !original.skipAuthRefresh &&

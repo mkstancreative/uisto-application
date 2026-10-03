@@ -13,8 +13,8 @@ npm run dev
 
 | Variable | Purpose |
 | --- | --- |
-| `VITE_API_URL` | API server root (no `/api/v1`). Leave empty in development to use the Vite proxy. Required for production builds unless the app is served from the same origin as the API. |
-| `VITE_PROXY_TARGET` | Development only — where `/api` and `/uploads` are proxied. Defaults to `http://localhost:5000`. On macOS port 5000 is used by AirPlay Receiver, so run the API on another port or disable it. |
+| `VITE_API_URL` | API server root (no `/api/v1`). Defaults to `https://career-portal-uisto.onrender.com`. Set it to an empty value to go through the Vite proxy instead (e.g. a local API). |
+| `VITE_PROXY_TARGET` | Only used when `VITE_API_URL` is empty — where `/api` and `/uploads` are proxied in development. On macOS port 5000 is used by AirPlay Receiver, so run a local API on another port. |
 
 The first HR manager account is created on the server (`node scripts/createStaffUser.js … --role hrm`);
 there is no public registration.

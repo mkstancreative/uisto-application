@@ -38,3 +38,12 @@ export const copyToClipboard = async (text) => {
     return false;
   }
 };
+
+/** First problem with a change-password form, or '' when it can be submitted. */
+export const validatePasswordChange = ({ current, next, confirm }) => {
+  if (!current) return 'Enter your current password.';
+  if (!isStrongPassword(next)) return 'The new password does not meet every rule in the checklist.';
+  if (next !== confirm) return 'The new passwords do not match.';
+  if (next === current) return 'Choose a password different from your current one.';
+  return '';
+};

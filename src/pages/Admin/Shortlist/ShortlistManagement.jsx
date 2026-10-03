@@ -28,7 +28,7 @@ import { errorMessage } from '../../../api/api';
 import { canWrite } from '../../../utils/roles';
 import { toTableMeta } from '../../../utils/pagination';
 import { downloadCsv, fileSafe } from '../../../utils/csv';
-import { formatDate, formatNum, formatOnlyDate } from '../../../utils/helpers';
+import { formatDate, formatDeadline, formatNum } from '../../../utils/helpers';
 import useDebouncedValue from '../Applications/useDebouncedValue';
 import '../Applications/recruitment.css';
 
@@ -442,7 +442,7 @@ function ShortlistManagement() {
                 <Briefcase size={13} />
                 <strong>{jobTitle(job)}</strong>
                 {job.position?.department && <span>· {job.position.department}</span>}
-                {job.applicationDeadline && <span>· closes {formatOnlyDate(job.applicationDeadline)}</span>}
+                {job.applicationDeadline && <span>· closes {formatDeadline(job.applicationDeadline)}</span>}
                 <StatusBadge status={isOpenJob(job) ? 'Open' : 'Closed'} />
                 <Link to={`/admin/applications?jobId=${jobId}`} className="rc-link-btn" style={{ marginLeft: 'auto' }}>
                   <ClipboardList size={13} style={{ verticalAlign: '-2px' }} /> View applications

@@ -3,9 +3,11 @@ import axios from 'axios';
 /* ════════════════════════════════════════
    API location
    - VITE_API_URL is the server root (no trailing slash, no /api/v1).
-   - Left empty in development so requests go through the Vite proxy.
+   - Unset → the deployed career-portal API.
+   - Set to an empty string → same origin (e.g. through the Vite proxy).
 ════════════════════════════════════════ */
-export const API_ORIGIN = (import.meta.env.VITE_API_URL ?? '').replace(/\/+$/, '');
+const DEFAULT_API_URL = 'https://career-portal-uisto.onrender.com';
+export const API_ORIGIN = (import.meta.env.VITE_API_URL ?? DEFAULT_API_URL).replace(/\/+$/, '');
 export const API_BASE = `${API_ORIGIN}/api/v1`;
 
 /** Turn a stored upload path ("/uploads/x.pdf" or an absolute disk path) into a URL. */

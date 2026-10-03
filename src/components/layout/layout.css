@@ -43,28 +43,7 @@ html.light-mode {
 }
 
 html.light-mode body {
-  background-color: #f3f6f5;
-  background-image: radial-gradient(
-      ellipse 60% 55% at 5% 5%,
-      rgba(var(--accent-rgb), 0.13) 0%,
-      transparent 65%
-    ),
-    radial-gradient(
-      ellipse 55% 50% at 98% 95%,
-      rgba(var(--accent-rgb), 0.09) 0%,
-      transparent 60%
-    ),
-    radial-gradient(
-      ellipse 40% 40% at 95% 5%,
-      rgba(var(--accent-rgb), 0.06) 0%,
-      transparent 55%
-    ),
-    radial-gradient(
-      ellipse 45% 35% at 50% 50%,
-      rgba(255, 255, 255, 1) 0%,
-      transparent 80%
-    );
-  background-attachment: fixed;
+  background: var(--main-bg);
   color: #071c20;
 }
 
@@ -81,7 +60,7 @@ html.light-mode .dashboard-main {
 }
 
 html.light-mode .dashboard-shell {
-  background: transparent;
+  background: var(--main-bg);
 }
 
 .sidebar {
@@ -388,6 +367,8 @@ html.light-mode .dashboard-shell {
 ══════════════════════════════════════════ */
 .dashboard-main {
   flex: 1;
+  /* Let wide content (tables) scroll inside its card instead of stretching the page */
+  min-width: 0;
   margin-left: var(--sb-width);
   display: flex;
   flex-direction: column;
@@ -812,6 +793,7 @@ html.light-mode .tb-notif-empty {
 
 .dashboard-content {
   flex: 1;
+  min-width: 0;
   padding: 28px 28px;
   animation: fadeIn 0.3s ease both;
 }

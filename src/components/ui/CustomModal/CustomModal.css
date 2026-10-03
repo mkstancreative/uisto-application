@@ -43,10 +43,10 @@
   max-width: 1200px;
 }
 
-/* Medium modal */
-.modal-card.medium {
-  width: 80%;
-  max-width: 800px;
+/* Medium modal — forms */
+.modal-card.modal-medium {
+  width: 100%;
+  max-width: 640px;
 }
 
 /* Dark Mode */

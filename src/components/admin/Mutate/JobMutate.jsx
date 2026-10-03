@@ -12,7 +12,7 @@ import {
   useAllSubcadres,
 } from "../../../hooks/useConfig";
 import { errorMessage } from "../../../api/api";
-import { endOfDayIso, toDateInput } from "../common/dates";
+import { deadlineToInput, endOfDayIso, toDateInput } from "../common/dates";
 import { makeSubcadreName, refId } from "../common/refs";
 import "../common/adminCommon.css";
 
@@ -137,7 +137,7 @@ function JobCreate({ closeModal }) {
       isOpen
       title="Open a Vacancy"
       subtitle="Publish an existing position on the careers site."
-      size="wide"
+      size="medium"
       onClose={closeModal}
       footer={
         <>
@@ -296,7 +296,7 @@ function JobEdit({ id, closeModal }) {
       <CustomModal
         isOpen
         title="Edit Vacancy"
-        size="wide"
+        size="medium"
         onClose={closeModal}
         footer={
           <button type="button" className="modal-cancel" onClick={closeModal}>
@@ -366,7 +366,7 @@ function JobEditForm({ job, requirements, closeModal }) {
   const subcadreName = useMemo(() => makeSubcadreName(subRes?.data ?? []), [subRes]);
 
   const cadre = job.position?.cadre;
-  const initialDeadline = job.applicationDeadline ? toDateInput(job.applicationDeadline) : "";
+  const initialDeadline = job.applicationDeadline ? deadlineToInput(job.applicationDeadline) : "";
   const matched = useMemo(
     () => matchRequirementIds(job.extraRequirements ?? [], requirements, cadre),
     [job.extraRequirements, requirements, cadre],
@@ -441,7 +441,7 @@ function JobEditForm({ job, requirements, closeModal }) {
       isOpen
       title="Edit Vacancy"
       subtitle="The position cannot be changed — close this vacancy and open a new one instead."
-      size="wide"
+      size="medium"
       onClose={closeModal}
       footer={
         <>
