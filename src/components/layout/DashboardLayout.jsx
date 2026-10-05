@@ -12,7 +12,7 @@ const THEME_KEY = 'uisto.theme';
 function DashboardLayout({
   navItems = [],
   logoIcon = '/logo.png',
-  logoTitle = 'UISTO Careers',
+  logoTitle = 'Netpro',
   logoSub = 'Recruitment Portal',
   userName = 'User',
   userRole = 'Staff',

@@ -13,7 +13,7 @@ function AdminLayout() {
     <DashboardLayout
       navItems={navItems}
       logoIcon="/logo.png"
-      logoTitle="UISTO Careers"
+      logoTitle="Netpro Careers"
       logoSub="Recruitment Portal"
       userName={user?.name || 'Staff'}
       userRole={roleLabel(user?.role)}

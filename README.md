@@ -1,4 +1,4 @@
-# UISTO Careers — Recruitment Portal
+# Netrpo Careers — Recruitment Portal
 
 Public careers site and staff recruitment dashboard for the University of Innovation,
 Science and Technology, built on the **MAIN JOB APPLICATION** API (career-portal backend).

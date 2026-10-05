@@ -1,3 +1,4 @@
 /* Edit here to rebrand the public site. */
-export const BRAND_NAME = 'UISTO Careers';
-export const BRAND_ORG = 'The University of Innovation, Science and Technology';
+export const BRAND_NAME = 'Netpro Recruitment Portal';
+export const BRAND_ORG = 'Netpro Recruitment Portal';
+    

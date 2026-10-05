@@ -7,7 +7,7 @@ function Footer() {
     <footer className="dashboard-footer">
       <div className="df-left">
         <span className="df-dot" />
-        <span>UISTO Careers · Recruitment Portal</span>
+        <span>Netpro · Recruitment Portal</span>
       </div>
       <div
         style={{
