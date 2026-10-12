@@ -11,7 +11,7 @@
 
   Usage:
     npm run seed:vacancies   (reads VITE_API_URL from .env)
-    SEED_EMAIL=you@uisto.edu.ng npm run seed:vacancies   (password is always prompted)
+    SEED_EMAIL=you@your-domain npm run seed:vacancies   (password is always prompted)
 
   Requires a registrar or HR manager account that has already changed its
   first-sign-in password. The password prompt does not echo anything.

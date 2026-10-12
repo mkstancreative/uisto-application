@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { EMAIL_DOMAIN } from '../../public/brand';
 import { toast } from 'react-toastify';
 import { AlertCircle, CheckCircle2, Info } from 'lucide-react';
 import CustomModal from '../../ui/CustomModal/CustomModal';
@@ -168,7 +169,7 @@ function StaffCreate({ closeModal }) {
             className="modal-input"
             value={form.email}
             onChange={set('email')}
-            placeholder="name@uisto.edu.ng"
+            placeholder={`name@${EMAIL_DOMAIN}`}
             autoComplete="off"
             required
           />

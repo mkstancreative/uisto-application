@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { EMAIL_PLACEHOLDER } from './brand';
 import { useMutation } from '@tanstack/react-query';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AlertCircle, Eye, EyeOff, Loader2, Lock, Mail } from 'lucide-react';
@@ -74,7 +75,7 @@ function LoginForm({ onForgotPassword }) {
           <Mail size={16} className="lp-input-icon" />
           <input
             type="email"
-            placeholder="you@uisto.edu.ng"
+            placeholder={EMAIL_PLACEHOLDER}
             autoComplete="username"
             autoFocus
             value={email}

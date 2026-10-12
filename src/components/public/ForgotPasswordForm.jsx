@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { EMAIL_PLACEHOLDER } from './brand';
 import { AlertCircle, ArrowLeft, Loader2, Mail, MailCheck } from 'lucide-react';
 import { useForgotPassword } from '../../hooks/useAccount';
 import { errorMessage } from '../../api/api';
@@ -53,7 +54,7 @@ function ForgotPasswordForm({ onBack }) {
           <Mail size={16} className="lp-input-icon" />
           <input
             type="email"
-            placeholder="you@uisto.edu.ng"
+            placeholder={EMAIL_PLACEHOLDER}
             autoComplete="email"
             autoFocus
             value={email}
