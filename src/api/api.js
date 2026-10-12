@@ -91,7 +91,6 @@ api.interceptors.response.use(
     return Promise.reject(toApiError(error));
   },
 );
-
 /** Human-readable message for any error thrown by a service call. */
 export const errorMessage = (err, fallback = 'Something went wrong. Please try again.') => {
   if (!err) return fallback;
@@ -101,5 +100,4 @@ export const errorMessage = (err, fallback = 'Something went wrong. Please try a
   }
   return err.message || fallback;
 };
-
 export default api;
