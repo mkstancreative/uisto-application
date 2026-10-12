@@ -10,8 +10,7 @@
   and a position that already has an active vacancy is skipped.
 
   Usage:
-    npm run seed:vacancies
-    API_URL=https://… npm run seed:vacancies
+    npm run seed:vacancies   (reads VITE_API_URL from .env)
     SEED_EMAIL=you@uisto.edu.ng npm run seed:vacancies   (password is always prompted)
 
   Requires a registrar or HR manager account that has already changed its
@@ -19,7 +18,9 @@
 */
 import readline from 'node:readline';
 
-const API_URL = (process.env.API_URL || 'https://career-portal-uisto.onrender.com').replace(/\/+$/, '');
+try { process.loadEnvFile(); } catch { /* no .env file */ }
+const API_URL = (process.env.VITE_API_URL || '').replace(/\/+$/, '');
+if (!API_URL) { console.error('Set VITE_API_URL in .env first.'); process.exit(1); }
 const BASE = `${API_URL}/api/v1`;
 const DEADLINE_DAYS = Number(process.env.DEADLINE_DAYS || 30);
 

@@ -10,7 +10,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, __dirname, '');
   // Used only when VITE_API_URL is set to an empty string (see .env.example)
-  const target = env.VITE_PROXY_TARGET || 'https://career-portal-uisto.onrender.com';
+  const target = env.VITE_PROXY_TARGET;
 
   return {
     plugins: [react(), tailwindcss()],
