@@ -13,7 +13,19 @@ export default defineConfig(({ mode }) => {
   const target = env.VITE_PROXY_TARGET;
 
   return {
-    plugins: [react(), tailwindcss()],
+    plugins: [
+      react(),
+      tailwindcss(),
+      {
+        // Fill the %VITE_*% placeholders in index.html, with defaults when unset
+        // (Vite otherwise leaves them as literal text).
+        name: 'html-app-name',
+        transformIndexHtml: (html) =>
+          html
+            .replaceAll('%VITE_APP_NAME%', env.VITE_APP_NAME || 'Netpro')
+            .replaceAll('%VITE_APP_TAGLINE%', env.VITE_APP_TAGLINE || 'Recruitment Portal'),
+      },
+    ],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
