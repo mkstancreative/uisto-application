@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
+import { APP_NAME } from "../public/brand";
 import {
     Sun,
     Moon,
@@ -81,7 +82,7 @@ function Topbar({
 
                 <div className="tb-left">
                     <div className="tb-page-title">{pageTitle}</div>
-                    <div className="tb-breadcrumb">Netpro › {pageTitle}</div>
+                    <div className="tb-breadcrumb">{APP_NAME} › {pageTitle}</div>
                 </div>
             </div>
 

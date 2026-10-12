@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
+import { APP_NAME, APP_TAGLINE } from '../public/brand';
 import Footer from './Footer';
 import './layout.css';
 import Sidebar from './Sidebar';
@@ -12,8 +13,8 @@ const THEME_KEY = 'uisto.theme';
 function DashboardLayout({
   navItems = [],
   logoIcon = '/logo.png',
-  logoTitle = 'Netpro',
-  logoSub = 'Recruitment Portal',
+  logoTitle = APP_NAME,
+  logoSub = APP_TAGLINE,
   userName = 'User',
   userRole = 'Staff',
   userEmail = '',

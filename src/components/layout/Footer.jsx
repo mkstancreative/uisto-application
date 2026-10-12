@@ -1,5 +1,6 @@
 import React from "react";
 import { Zap } from "lucide-react";
+import { APP_NAME, APP_TAGLINE } from "../public/brand";
 
 function Footer() {
   const year = new Date().getFullYear();
@@ -7,7 +8,7 @@ function Footer() {
     <footer className="dashboard-footer">
       <div className="df-left">
         <span className="df-dot" />
-        <span>Netpro · Recruitment Portal</span>
+        <span>{APP_NAME} · {APP_TAGLINE}</span>
       </div>
       <div
         style={{
